@@ -34,6 +34,8 @@ const int MIN_WINDOW_HEIGHT = 480;
 int numChoicesDisplayed = 0; // this just counts the number of choices displayed. We calculate if we hit a button manually.
 char *choices[4][255];
 int nchoices = 0;
+bool menu = true; // is the menu displayed or not
+int selectedSlot = -1;
 
 char* constructFilePath(const char* directory, const char* filename, char* buffer, size_t bufferSize);
 char* completePath(const char* filename); // not thread safe, just uses workingDirectory & filenameBuffer
@@ -41,6 +43,38 @@ int loadScene(CScene *scene);
 int loadScope(CScope *scope);
 void onTap( int x, int y );
 void onNextScene( );
+void saveScreenshot( );
+
+typedef struct uiButton {
+    SDL_Rect rect;
+    char text[64];
+    int tag; // identifier of the button
+    bool hidden;
+    int bgColor; // 0-255
+    int fgColor; // 0-255
+} uiButton;
+
+typedef struct saveSlot {
+    SDL_Rect rect;
+    uiButton button; // only used for the rect, not drawn
+} saveSlot;
+
+bool didTapButton( uiButton *button, int x, int y ) {
+    if (!button)
+        false;
+    if (button->hidden)
+        return false;
+    if (x>button->rect.x && x<button->rect.x+button->rect.w && y>button->rect.y && y<button->rect.y+button->rect.h)
+        return true;
+    return false;
+}
+
+uiButton loadButton;
+uiButton saveButton;
+uiButton playButton; // start/continue
+uiButton restartButton;
+uiButton menuButton;
+saveSlot slots[6];
 
 typedef struct relativePosition {
     float x;
@@ -62,6 +96,46 @@ char *constructFilePath(const char* directory, const char* filename, char* buffe
     return buffer;
 }
 
+int fileExists(const char *path) {
+    return access(path, F_OK) != -1;
+}
+
+// Function to copy a file from sourcePath to destinationPath
+int copyFile(const char *sourcePath, const char *destinationPath) {
+
+    printf("copyFile(%s,%s)\n",sourcePath,destinationPath);
+
+    FILE *sourceFile = fopen(sourcePath, "rb");
+    if (sourceFile == NULL) {
+        perror("Error opening source file");
+        return 1;
+    }
+
+    FILE *destinationFile = fopen(destinationPath, "wb");
+    if (destinationFile == NULL) {
+        fclose(sourceFile);
+        perror("Error opening destination file");
+        return 1;
+    }
+
+    char buffer[1024];
+    size_t bytesRead;
+
+    while ((bytesRead = fread(buffer, 1, sizeof(buffer), sourceFile)) > 0) {
+        if (fwrite(buffer, 1, bytesRead, destinationFile) != bytesRead) {
+            perror("Error writing to destination file");
+            fclose(sourceFile);
+            fclose(destinationFile);
+            return 1;
+        }
+    }
+
+    fclose(sourceFile);
+    fclose(destinationFile);
+
+    return 0; // Success
+}
+
 // not thread safe - constructs the complete file to resources for a file
 //
 char *completePath(const char* filename) {
@@ -76,6 +150,18 @@ void loadScript(char *scriptFilename) {
 
 void renderText(const char* text, int x, int y) {
     SDL_Surface* textSurface = TTF_RenderText_Blended(font, text, textColor);
+    SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+    SDL_Rect textRect = {x, y, textSurface->w, textSurface->h};
+    
+    SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
+
+    SDL_FreeSurface(textSurface);
+    SDL_DestroyTexture(textTexture);
+}
+
+void renderTextWithColor(const char* text, int x, int y, int color) {
+    SDL_Color colorDef = {color, color, color};
+    SDL_Surface* textSurface = TTF_RenderText_Blended(font, text, colorDef);
     SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
     SDL_Rect textRect = {x, y, textSurface->w, textSurface->h};
     
@@ -102,6 +188,39 @@ void renderChoiceButton(const char* buttonText) {
     SDL_Surface* textSurface = TTF_RenderText_Solid(font, buttonText, (SDL_Color){255, 255, 255, 255});
     renderText(buttonText,TEXT_OFFSET + (windowWidth-(TEXT_OFFSET*2) - textSurface->w) / 2,y + (BUTTON_HEIGHT - textSurface->h) / 2);
     numChoicesDisplayed++;
+    SDL_FreeSurface(textSurface);
+}
+
+void renderUIButton(uiButton *buttonDef) {
+    if (buttonDef->hidden)
+        return;
+    // Draw a semi-transparent black rectangle
+    SDL_SetRenderDrawColor(renderer, buttonDef->bgColor, buttonDef->bgColor, buttonDef->bgColor, 64);
+    SDL_RenderFillRect(renderer, &buttonDef->rect);
+
+    SDL_Surface* textSurface = TTF_RenderText_Solid(font, (char*)buttonDef->text, (SDL_Color){buttonDef->fgColor, buttonDef->fgColor, buttonDef->fgColor, 255});
+    renderTextWithColor((char*)buttonDef->text,buttonDef->rect.x+((buttonDef->rect.w-textSurface->w)/2),buttonDef->rect.y+((buttonDef->rect.h-textSurface->h)/2),buttonDef->fgColor);
+    SDL_FreeSurface(textSurface);
+}
+
+void renderBMPImage(const char* imagePath, SDL_Rect rect) {
+    // Load a BMP image
+
+    if (!fileExists(imagePath))
+        return;
+
+    SDL_Surface* image = SDL_LoadBMP(imagePath);
+    if (image == NULL) {
+        printf("Failed to load image! SDL_Error: %s\n", SDL_GetError());
+        return;
+    }
+
+    SDL_Texture* imageTexture = SDL_CreateTextureFromSurface(renderer, image);
+    SDL_FreeSurface(image);
+
+    // Render the image
+    SDL_RenderCopy(renderer, imageTexture, NULL, &rect);
+    SDL_DestroyTexture(imageTexture);
 }
 
 int onQuestionButton(int index) {
@@ -222,124 +341,199 @@ void redraw() {
 
     // Get the current window size
     SDL_GetWindowSize(window, &windowWidth, &windowHeight);
+        
+    if (menu) {
+        SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
-    // Calculate aspect-fill scaling based on the current window size
-    float imageAspectRatio = (float)srcRect.w / srcRect.h;
-    float windowAspectRatio = (float)windowWidth / windowHeight;
+        SDL_Rect menuRect;
+        menuRect.x = 0;
+        menuRect.y = 0;
+        menuRect.w = windowWidth;
+        menuRect.h = windowHeight;
 
-    if (imageAspectRatio > windowAspectRatio) {
-        // Image is wider than the window
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_RenderFillRect(renderer, &menuRect);
 
-        destRect.h = windowHeight;
-        destRect.w = windowHeight*imageAspectRatio;
-        destRect.x = -(destRect.w-windowWidth)/2;
-        destRect.y = 0;
+        renderTextWithColor("vnplayer",20,20,255);
 
+        saveButton.rect.x = 20;
+        saveButton.rect.y = windowHeight-80;
+        renderUIButton(&saveButton);
+        loadButton.rect.x = saveButton.rect.x+saveButton.rect.w+20;
+        loadButton.rect.y = windowHeight-80;
+        renderUIButton(&loadButton);
+        playButton.rect.x = windowWidth-playButton.rect.w-20;
+        playButton.rect.y = windowHeight-80;
+        renderUIButton(&playButton);
+        restartButton.rect.x = playButton.rect.x-restartButton.rect.w-20;
+        restartButton.rect.y = windowHeight-80;
+        renderUIButton(&restartButton);
+
+        SDL_Rect slotsRect;
+        slotsRect.x = 20;
+        slotsRect.y = 80;
+        slotsRect.w = windowWidth-40;
+        slotsRect.h = windowHeight-80-saveButton.rect.h-40;
+
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 32);
+        SDL_RenderFillRect(renderer, &slotsRect);
+
+        // now set the save slot grid items & draw them
+        // 1 row:
+        slots[0].rect.x = slotsRect.x;
+        slots[0].rect.y = slotsRect.y;
+        slots[1].rect.x = slotsRect.x+slotsRect.w/3;
+        slots[1].rect.y = slotsRect.y;
+        slots[2].rect.x = slotsRect.x+(slotsRect.w/3)*2;
+        slots[2].rect.y = slotsRect.y;
+        // 2 row:
+        slots[3].rect.x = slotsRect.x;
+        slots[3].rect.y = slotsRect.y+(slotsRect.h/2);
+        slots[4].rect.x = slotsRect.x+slotsRect.w/3;
+        slots[4].rect.y = slotsRect.y+(slotsRect.h/2);
+        slots[5].rect.x = slotsRect.x+(slotsRect.w/3)*2;
+        slots[5].rect.y = slotsRect.y+(slotsRect.h/2);
+        for(int n = 0; n < 6; n++) {
+            slots[n].rect.w = (slotsRect.w/3);
+            slots[n].rect.h = (slotsRect.h/2);
+
+            slots[n].rect.x+=1;
+            slots[n].rect.y+=1;
+            slots[n].rect.w-=2;
+            slots[n].rect.h-=2;
+        }
+        char modPath[256];
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 30);
+        for(int n = 0; n < 6; n++) {
+            slots[n].button.rect = slots[n].rect;
+            slots[n].button.hidden = false;
+            SDL_RenderFillRect(renderer, &slots[n].rect);
+            sprintf((char*)modPath,"screenshot%d.bmp",n);
+            renderBMPImage(completePath((char*)modPath),slots[n].rect);
+        }
     } else {
-        // Image is taller than the window
 
-        destRect.h = windowWidth/imageAspectRatio;
-        destRect.w = windowWidth;
-        destRect.y = -(destRect.h-windowHeight)/2;
-        destRect.x = 0;
-    }
+        // Calculate aspect-fill scaling based on the current window size
+        float imageAspectRatio = (float)srcRect.w / srcRect.h;
+        float windowAspectRatio = (float)windowWidth / windowHeight;
 
-    SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, bgImageTexture, &srcRect, &destRect);
-        
-    //renderOverlay(olImageTexture[0],destRect);
-    relativePosition relative = {0.0,0.1,1.0,0.9};
-    int n;
-    for(n = 0; n < 6; n++) {
-        if (olImageTexture[n])
-            renderOverlayRelative(olImageTexture[n],relative);
-    }
+        if (imageAspectRatio > windowAspectRatio) {
+            // Image is wider than the window
 
-    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-    // Create a black gradient with varying alpha from the bottom to 25% of the screen height
-    for (int y = windowHeight; y >= windowHeight * 0.65; y--) {
-        float alpha = (y-(windowHeight * 0.65))/(windowHeight * 0.35);
-        //printf("alpha(%f) y(%d)\n",alpha,y);
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, alpha*255);
-        SDL_RenderDrawLine(renderer, 0, y, windowWidth, y);
-    }
-
-    int textX = TEXT_OFFSET; // offset from the sides
-    int textY = windowHeight - (windowHeight * 25 / 100); // 25% from the bottom
-    int lineHeight = TTF_FontLineSkip(font);
-
-    char* textCopy = strdup(currentText); //"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\nUt enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. "); // Make a copy of the text to avoid modifying the original
-    char* token = strtok(textCopy, " ");
-        
-    while (token != NULL) {
-        
-        char* newlinePos = strchr(token, '\n');
-
-        if (newlinePos != NULL) {
-            // Calculate the length of the first part of the string
-            size_t firstPartLength = newlinePos - token;
-
-            // Create two new strings to hold the parts
-            char firstPart[firstPartLength + 1]; // +1 for the null-terminator
-            char secondPart[strlen(newlinePos) + 1];
-
-            // Copy the first part of the string
-            strncpy(firstPart, token, firstPartLength);
-            firstPart[firstPartLength] = '\0'; // Null-terminate the first part
-
-            // Copy the second part of the string (including the newline character)
-            strcpy(secondPart, newlinePos+1);
-
-            // Print the two parts
-            //printf("First Part: %s\n", firstPart);
-            //printf("Second Part: %s\n", secondPart);
-
-            int tokenWidth = getTextWidth(firstPart, font);
-            tokenWidth += getTextWidth(" ", font);
-            if (textX + tokenWidth + TEXT_OFFSET > windowWidth) {
-                textX = TEXT_OFFSET;
-                textY += lineHeight;
-            }
-            renderText(firstPart, textX, textY);
-            textX += tokenWidth;
-            //
-            textY += lineHeight;
-            textX = TEXT_OFFSET;
-            
-            tokenWidth = getTextWidth(secondPart, font);
-            tokenWidth += getTextWidth(" ", font);
-            
-            renderText(secondPart, textX, textY);
-            textX += tokenWidth;
+            destRect.h = windowHeight;
+            destRect.w = windowHeight*imageAspectRatio;
+            destRect.x = -(destRect.w-windowWidth)/2;
+            destRect.y = 0;
 
         } else {
-            // nope
+            // Image is taller than the window
 
-            int tokenWidth = getTextWidth(token, font);
-            tokenWidth += getTextWidth(" ", font);
-            if (textX + tokenWidth + TEXT_OFFSET > windowWidth) {
-                textX = TEXT_OFFSET;
-                textY += lineHeight;
-            }
-            renderText(token, textX, textY);
-            textX += tokenWidth;
+            destRect.h = windowWidth/imageAspectRatio;
+            destRect.w = windowWidth;
+            destRect.y = -(destRect.h-windowHeight)/2;
+            destRect.x = 0;
         }
 
-        token = strtok(NULL, " ");
-    }
+        SDL_RenderClear(renderer);
+        SDL_RenderCopy(renderer, bgImageTexture, &srcRect, &destRect);
 
-    free(textCopy);
+        //renderOverlay(olImageTexture[0],destRect);
+        relativePosition relative = {0.0,0.1,1.0,0.9};
+        int n;
+        for(n = 0; n < 6; n++) {
+            if (olImageTexture[n])
+                renderOverlayRelative(olImageTexture[n],relative);
+        }
 
-    //numChoicesDisplayed = 0;
-    //renderChoiceButton("choice 1");
-    //renderChoiceButton("choice 2");
+        SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+        // Create a black gradient with varying alpha from the bottom to 25% of the screen height
+        for (int y = windowHeight; y >= windowHeight * 0.65; y--) {
+            float alpha = (y-(windowHeight * 0.65))/(windowHeight * 0.35);
+            //printf("alpha(%f) y(%d)\n",alpha,y);
+            SDL_SetRenderDrawColor(renderer, 0, 0, 0, alpha*255);
+            SDL_RenderDrawLine(renderer, 0, y, windowWidth, y);
+        }
 
-    numChoicesDisplayed = 0;
-    //printf("query choice buttons\n");
-    for(int n = 0; n < nchoices; n++) {
-        //printf("    %s\n",(char*)choices[n]);
-        renderChoiceButton((char*)choices[n]);
-    }
+        int textX = TEXT_OFFSET; // offset from the sides
+        int textY = windowHeight - (windowHeight * 25 / 100); // 25% from the bottom
+        int lineHeight = TTF_FontLineSkip(font);
+
+        char* textCopy = strdup(currentText); //"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\nUt enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. "); // Make a copy of the text to avoid modifying the original
+        char* token = strtok(textCopy, " ");
+            
+        while (token != NULL) {
+            
+            char* newlinePos = strchr(token, '\n');
+
+            if (newlinePos != NULL) {
+                // Calculate the length of the first part of the string
+                size_t firstPartLength = newlinePos - token;
+
+                // Create two new strings to hold the parts
+                char firstPart[firstPartLength + 1]; // +1 for the null-terminator
+                char secondPart[strlen(newlinePos) + 1];
+
+                // Copy the first part of the string
+                strncpy(firstPart, token, firstPartLength);
+                firstPart[firstPartLength] = '\0'; // Null-terminate the first part
+
+                // Copy the second part of the string (including the newline character)
+                strcpy(secondPart, newlinePos+1);
+
+                // Print the two parts
+                //printf("First Part: %s\n", firstPart);
+                //printf("Second Part: %s\n", secondPart);
+
+                int tokenWidth = getTextWidth(firstPart, font);
+                tokenWidth += getTextWidth(" ", font);
+                if (textX + tokenWidth + TEXT_OFFSET > windowWidth) {
+                    textX = TEXT_OFFSET;
+                    textY += lineHeight;
+                }
+                renderText(firstPart, textX, textY);
+                textX += tokenWidth;
+                //
+                textY += lineHeight;
+                textX = TEXT_OFFSET;
+                
+                tokenWidth = getTextWidth(secondPart, font);
+                tokenWidth += getTextWidth(" ", font);
+                
+                renderText(secondPart, textX, textY);
+                textX += tokenWidth;
+
+            } else {
+                // nope
+
+                int tokenWidth = getTextWidth(token, font);
+                tokenWidth += getTextWidth(" ", font);
+                if (textX + tokenWidth + TEXT_OFFSET > windowWidth) {
+                    textX = TEXT_OFFSET;
+                    textY += lineHeight;
+                }
+                renderText(token, textX, textY);
+                textX += tokenWidth;
+            }
+
+            token = strtok(NULL, " ");
+        }
+
+        free(textCopy);
+
+        //numChoicesDisplayed = 0;
+        //renderChoiceButton("choice 1");
+        //renderChoiceButton("choice 2");
+
+        numChoicesDisplayed = 0;
+        //printf("query choice buttons\n");
+        for(int n = 0; n < nchoices; n++) {
+            //printf("    %s\n",(char*)choices[n]);
+            renderChoiceButton((char*)choices[n]);
+        }
+
+        renderUIButton(&menuButton);
+
+    } // menu yes/no
 
     SDL_RenderPresent(renderer);
 }
@@ -733,8 +927,62 @@ void onNextScene( ) {
     loadScene(scene);
 }
 
+void onMenuWindow( int x, int y ) {
+    printf("onMenuWindow\n");
+
+    for(int n = 0; n < 6; n++) {
+        if (didTapButton(&slots[n].button,x,y)) {
+            printf("tapped slot(%d)\n",n);
+            selectedSlot = n;
+            return;
+        }
+    }
+
+    if (didTapButton(&saveButton,x,y)) {
+        printf("saveButton tapped\n");
+
+        if (selectedSlot>-1) {
+            char modPath[256];
+            sprintf((char*)modPath,"screenshot%d.bmp",selectedSlot);
+            char source[256], destination[256];
+            strcpy((char*)source,completePath("screenshot.bmp"));
+            strcpy((char*)destination,completePath((char*)modPath));
+            copyFile(source,destination);
+        }
+
+    } else if (didTapButton(&loadButton,x,y)) {
+        printf("loadButton tapped\n");
+    } else if (didTapButton(&playButton,x,y)) {
+        printf("playButton tapped\n");
+        menu = false;
+        Mix_ResumeMusic();
+        redraw();
+    } else if (didTapButton(&restartButton,x,y)) {
+        printf("restartButton tapped\n");
+        CScene *scene = script->rewind();
+        scene->rewind();
+        menu = false;
+        loadScene(scene);
+    }
+
+}
+
+// on the menu button in game
+void onMenu( ) {
+    selectedSlot = -1;
+    saveScreenshot(); // we save the screenshot everytime we go into the menu in case we want to do a save
+    Mix_PauseMusic();
+    menu = true;
+    redraw();
+}
+
 void onTap( int x, int y ) {
     printf("onTap\n");
+
+    if (didTapButton(&menuButton,x,y)) {
+        onMenu();
+        return;
+    }
 
     int windowWidth, windowHeight;
     SDL_GetWindowSize(window, &windowWidth, &windowHeight);
@@ -780,6 +1028,20 @@ void onTap( int x, int y ) {
     }
 }
 
+void saveScreenshot( ) {
+    SDL_Surface* screenSurface = SDL_GetWindowSurface(window);
+
+    // Capture a screenshot
+    int windowWidth, windowHeight;
+    SDL_GetWindowSize(window, &windowWidth, &windowHeight);
+    SDL_Surface* screenshot = SDL_CreateRGBSurface(0, windowWidth, windowHeight, 32, 0, 0, 0, 0);
+    SDL_RenderReadPixels(renderer, NULL, SDL_PIXELFORMAT_ARGB8888, screenshot->pixels, screenshot->pitch);
+    SDL_SaveBMP(screenshot, completePath("screenshot.bmp")); // Save the screenshot as a BMP file - in the resources
+
+    // Cleanup and exit
+    SDL_FreeSurface(screenshot);
+}
+
 int main(int argc, char* argv[]) {
 
     if (argc > 0) {
@@ -796,6 +1058,47 @@ int main(int argc, char* argv[]) {
         fprintf(stderr, "Unable to determine the binary path.\n");
         return 1;
     }
+
+    //
+    saveButton.tag = 0;
+    strcpy(saveButton.text,"save");
+    saveButton.rect.w = 120;
+    saveButton.rect.h = 60;
+    saveButton.bgColor = 255;
+    saveButton.fgColor = 255;
+    saveButton.hidden = false;
+    loadButton.tag = 1;
+    strcpy(loadButton.text,"load");
+    loadButton.rect.w = 120;
+    loadButton.rect.h = 60;
+    loadButton.bgColor = 255;
+    loadButton.fgColor = 255;
+    loadButton.hidden = false;
+    playButton.tag = 2;
+    strcpy(playButton.text,"start");
+    playButton.rect.w = 120;
+    playButton.rect.h = 60;
+    playButton.bgColor = 255;
+    playButton.fgColor = 255;
+    playButton.hidden = false;
+    restartButton.tag = 3;
+    strcpy(restartButton.text,"restart");
+    restartButton.rect.w = 120;
+    restartButton.rect.h = 60;
+    restartButton.bgColor = 255;
+    restartButton.fgColor = 255;
+    restartButton.hidden = false;
+    //
+    menuButton.tag = 99;
+    strcpy(menuButton.text,"menu");
+    menuButton.rect.x = 10;
+    menuButton.rect.y = 10;
+    menuButton.rect.w = 90;
+    menuButton.rect.h = 40;
+    menuButton.bgColor = 0;
+    menuButton.fgColor = 200;
+    menuButton.hidden = false;
+    //
 
     loadScript("script_tears01-vnp.xml");
     CScene *scene = script->rewind();
@@ -899,7 +1202,11 @@ int main(int argc, char* argv[]) {
             } else if (event.type == SDL_MOUSEBUTTONUP) {
                 if (event.button.button == SDL_BUTTON_LEFT) {
                     printf("Left mouse button clicked at (%d, %d)\n", event.button.x, event.button.y);
-                    onTap(event.button.x,event.button.y);
+                    if (menu) {
+                        onMenuWindow(event.button.x,event.button.y);
+                    } else {
+                        onTap(event.button.x,event.button.y);
+                    }
                 }
             } else if (event.type == SDL_WINDOWEVENT) {
                 if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
