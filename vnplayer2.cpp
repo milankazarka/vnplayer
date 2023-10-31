@@ -14,7 +14,6 @@
 
 SDL_Texture* bgImageTexture = NULL;
 SDL_Texture* testImageTexture = NULL;
-SDL_Texture *olImageTexture[6] = {NULL,NULL,NULL,NULL,NULL,NULL}; // 6 overlays
 SDL_Texture *laImageTexture[6] = {NULL,NULL,NULL,NULL,NULL,NULL}; // 6 layers
 SDL_Renderer* renderer = NULL;
 SDL_Window* window = NULL;
@@ -37,6 +36,7 @@ int nchoices = 0;
 bool menu = true; // is the menu displayed or not
 int selectedSlot = -1;
 const int MAX_SAVEFILE_LINE_LENGTH = 256;
+bool playPressed = false;
 
 char* constructFilePath(const char* directory, const char* filename, char* buffer, size_t bufferSize);
 char* completePath(const char* filename); // not thread safe, just uses workingDirectory & filenameBuffer
@@ -47,6 +47,17 @@ void onNextScene( );
 void saveScreenshot( );
 void loadSaveFile(const char *filePath);
 int copyFile(const char *sourcePath, const char *destinationPath);
+
+typedef struct relativePosition {
+    float x, y, w, h;
+} relativePosition;
+
+typedef struct overlay {
+    SDL_Texture *texture;
+    relativePosition relative; // relative positioning
+} overlay;
+
+overlay overlays[6];
 
 typedef struct uiButton {
     SDL_Rect rect;
@@ -78,13 +89,6 @@ uiButton playButton; // start/continue
 uiButton restartButton;
 uiButton menuButton;
 saveSlot slots[6];
-
-typedef struct relativePosition {
-    float x;
-    float y;
-    float w;
-    float h;
-} relativePosition;
 
 char *constructFilePath(const char* directory, const char* filename, char* buffer, size_t bufferSize) {
     if (directory == NULL || filename == NULL || buffer == NULL || bufferSize == 0) {
@@ -422,8 +426,9 @@ void renderOverlay(SDL_Texture* olImageTexture, SDL_Rect destRect) {
 
 // render overlay by defining a relative position/sizing to the window
 //
-void renderOverlayRelative(SDL_Texture* olImageTexture, relativePosition position) {
-    if (!olImageTexture)
+void renderOverlay(overlay *ol) {
+
+    if (!ol)
         return;
 
     int windowWidth, windowHeight;
@@ -432,13 +437,13 @@ void renderOverlayRelative(SDL_Texture* olImageTexture, relativePosition positio
     SDL_Rect srcRect;
     srcRect.x = 0;
     srcRect.y = 0;
-    SDL_QueryTexture(olImageTexture, NULL, NULL, &srcRect.w, &srcRect.h);
+    SDL_QueryTexture(ol->texture, NULL, NULL, &srcRect.w, &srcRect.h);
 
     SDL_Rect destRect;
-    destRect.x = (int)(position.x * windowWidth);
-    destRect.y = (int)(position.y * windowHeight);
-    destRect.w = (int)(position.w * windowWidth);
-    destRect.h = (int)(position.h * windowHeight);
+    destRect.x = (int)(ol->relative.x * windowWidth);
+    destRect.y = (int)(ol->relative.y * windowHeight);
+    destRect.w = (int)(ol->relative.w * windowWidth);
+    destRect.h = (int)(ol->relative.h * windowHeight);
 
     // Calculate aspect-fit scaling based on the relative position and size
     float imageAspectRatio = (float)srcRect.w / srcRect.h;
@@ -452,10 +457,10 @@ void renderOverlayRelative(SDL_Texture* olImageTexture, relativePosition positio
         destRect.w = (int)(destRect.h * imageAspectRatio);
     }
 
-    destRect.x = destRect.x + (int)((position.w * windowWidth - destRect.w) / 2);
-    destRect.y = destRect.y + (int)((position.h * windowHeight - destRect.h) / 2);
+    destRect.x = destRect.x + (int)((ol->relative.w * windowWidth - destRect.w) / 2);
+    destRect.y = destRect.y + (int)((ol->relative.h * windowHeight - destRect.h) / 2);
 
-    renderOverlay(olImageTexture,destRect);
+    renderOverlay(ol->texture,destRect);
 }
 
 void redraw() {
@@ -562,17 +567,41 @@ void redraw() {
         }
 
         SDL_RenderClear(renderer);
+        SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+
         SDL_RenderCopy(renderer, bgImageTexture, &srcRect, &destRect);
 
-        //renderOverlay(olImageTexture[0],destRect);
-        relativePosition relative = {0.0,0.1,1.0,0.9};
         int n;
         for(n = 0; n < 6; n++) {
-            if (olImageTexture[n])
-                renderOverlayRelative(olImageTexture[n],relative);
+            SDL_QueryTexture(laImageTexture[n], NULL, NULL, &srcRect.w, &srcRect.h);
+            imageAspectRatio = (float)srcRect.w / srcRect.h;
+            windowAspectRatio = (float)windowWidth / windowHeight;
+
+            if (imageAspectRatio > windowAspectRatio) {
+                // Image is wider than the window
+
+                destRect.h = windowHeight;
+                destRect.w = windowHeight*imageAspectRatio;
+                destRect.x = -(destRect.w-windowWidth)/2;
+                destRect.y = 0;
+
+            } else {
+                // Image is taller than the window
+
+                destRect.h = windowWidth/imageAspectRatio;
+                destRect.w = windowWidth;
+                destRect.y = -(destRect.h-windowHeight)/2;
+                destRect.x = 0;
+            }
+            SDL_RenderCopy(renderer, laImageTexture[n], &srcRect, &destRect);
         }
 
-        SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+        for(n = 0; n < 6; n++) {
+            if (overlays[n].texture) {
+                renderOverlay(&overlays[n]);//.texture,overlays[n].relative);
+            }
+        }
+
         // Create a black gradient with varying alpha from the bottom to 25% of the screen height
         for (int y = windowHeight; y >= windowHeight * 0.65; y--) {
             float alpha = (y-(windowHeight * 0.65))/(windowHeight * 0.35);
@@ -680,6 +709,7 @@ static int resizingEventWatcher(void* data, SDL_Event* event) {
 int loadBackgroundElement(TiXmlElement *eimage) {
     if (!eimage)
         return -1;
+
     bgImageTexture = IMG_LoadTexture(renderer, completePath(eimage->Attribute("filename")));
     return 0;
 }
@@ -725,9 +755,9 @@ int setCurrentOverlaysFromPage(CPage *page) {
                 ov.doclear = YES;
         } */
         for(n = 0; n < 6; n++) {
-            if (olImageTexture[n]) {
-                SDL_DestroyTexture(olImageTexture[n]);
-                olImageTexture[n] = NULL;
+            if (overlays[n].texture) {
+                SDL_DestroyTexture(overlays[n].texture);
+                overlays[n].texture = NULL;
             }
         }
         
@@ -741,7 +771,12 @@ int setCurrentOverlaysFromPage(CPage *page) {
         current = omaster;
         while(current) {
 
-            olImageTexture[0] = IMG_LoadTexture(renderer, completePath(current->meoverlay->Attribute("filename")));
+            overlays[n].texture = IMG_LoadTexture(renderer, completePath(current->meoverlay->Attribute("filename")));
+            SDL_SetTextureBlendMode(overlays[n].texture, SDL_BLENDMODE_BLEND);
+            overlays[n].relative.x = current->posx;
+            overlays[n].relative.y = current->posy;
+            overlays[n].relative.w = current->w;
+            overlays[n].relative.h = current->h;
             n++;
 
             current = current->mnext;
@@ -940,16 +975,55 @@ int onLastOfScene( ) {
     return 0;
 }
 
+int loadLayersForScene(CScene *scene) {
+    printf("loadLayersForScene\n");
+    if (!scene)
+        return 0;
+    
+    for(int n = 0; n<6; n++) {
+        if (laImageTexture[n]) {
+            SDL_DestroyTexture(laImageTexture[n]);
+            laImageTexture[n] = NULL;
+        }
+    }
+
+    int index = 0;
+    CLayer *current = scene->mlayer;
+    while(current) {
+        if (current->melayer->Attribute("filename")) {
+            laImageTexture[index] = IMG_LoadTexture(renderer, completePath(current->melayer->Attribute("filename")));
+            index++;
+        }
+        current = current->mnext;
+    }
+
+    return 1;
+}
+
 int loadSceneContent(CScene *scene) {
     if (!scene)
-        return -1;
+        return 0;
 
     script->onScene(scene);
+
+    if (bgImageTexture) {
+        SDL_DestroyTexture(bgImageTexture);
+        bgImageTexture = NULL;
+    }
+
+    for(int n = 0; n < 6; n++) {
+        if (overlays[n].texture) {
+            SDL_DestroyTexture(overlays[n].texture);
+            overlays[n].texture = NULL;
+        }
+    }
 
     TiXmlElement *eimage = scene->getImageElement();
     if (eimage) {
         loadBackgroundElement(eimage);
     }
+
+    loadLayersForScene(scene);
 
     CPage *pages = NULL;
     CPage *currentPage = NULL;
@@ -989,7 +1063,7 @@ int loadSceneContent(CScene *scene) {
 
     playSceneMusic(scene);
 
-    return 0;
+    return 1;
 }
 
 int loadScope(CScope *scope) {
@@ -1067,22 +1141,24 @@ void onMenuWindow( int x, int y ) {
 
     if (didTapButton(&saveButton,x,y)) {
         printf("saveButton tapped\n");
-
+        
         onSave();
 
     } else if (didTapButton(&loadButton,x,y)) {
         printf("loadButton tapped\n");
-
+        
         menu = false;
         onLoad();
 
     } else if (didTapButton(&playButton,x,y)) {
         printf("playButton tapped\n");
+        
         menu = false;
         Mix_ResumeMusic();
         redraw();
     } else if (didTapButton(&restartButton,x,y)) {
         printf("restartButton tapped\n");
+        
         CScene *scene = script->rewind();
         scene->rewind();
         menu = false;
@@ -1093,6 +1169,7 @@ void onMenuWindow( int x, int y ) {
 
 // on the menu button in game
 void onMenu( ) {
+    nchoices = 0;
     selectedSlot = -1;
     saveScreenshot(); // we save the screenshot everytime we go into the menu in case we want to do a save
     Mix_PauseMusic();
@@ -1181,6 +1258,10 @@ int main(int argc, char* argv[]) {
     } else {
         fprintf(stderr, "Unable to determine the binary path.\n");
         return 1;
+    }
+
+    for(int n = 0; n < 6; n++) {
+        overlays[n].texture = NULL;
     }
 
     //
@@ -1300,7 +1381,9 @@ int main(int argc, char* argv[]) {
         return 1;
     }
     */
-    SDL_SetTextureBlendMode(olImageTexture[0], SDL_BLENDMODE_BLEND);
+
+    //SDL_SetTextureBlendMode(olImageTexture[0], SDL_BLENDMODE_BLEND);
+    
     /**
     Mix_Music* music = Mix_LoadMUS(completePath("GA_100_Dm_DarkShadow_FRK.mp3"));
     if (music == NULL) {
