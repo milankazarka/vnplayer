@@ -36,6 +36,7 @@ char *choices[4][255];
 int nchoices = 0;
 bool menu = true; // is the menu displayed or not
 int selectedSlot = -1;
+const int MAX_SAVEFILE_LINE_LENGTH = 256;
 
 char* constructFilePath(const char* directory, const char* filename, char* buffer, size_t bufferSize);
 char* completePath(const char* filename); // not thread safe, just uses workingDirectory & filenameBuffer
@@ -44,6 +45,8 @@ int loadScope(CScope *scope);
 void onTap( int x, int y );
 void onNextScene( );
 void saveScreenshot( );
+void loadSaveFile(const char *filePath);
+int copyFile(const char *sourcePath, const char *destinationPath);
 
 typedef struct uiButton {
     SDL_Rect rect;
@@ -98,6 +101,130 @@ char *constructFilePath(const char* directory, const char* filename, char* buffe
 
 int fileExists(const char *path) {
     return access(path, F_OK) != -1;
+}
+
+// read the savefile - in a format:
+//      1. position
+//      2. attribute:value
+//      3. attribute:value
+//      ... 
+//
+void loadSaveFile(const char *filePath) {
+
+    printf("loadSaveFile\n");
+
+    FILE *file = fopen(filePath, "r");
+    if (file == NULL) {
+        perror("Error opening file");
+        return;
+    }
+
+    char line[MAX_SAVEFILE_LINE_LENGTH];
+    int firstLine = 1;  // Flag to check if it's the first line
+
+    CScene *cs = NULL;
+    CCurrentContext *cc = NULL;
+
+    while (fgets(line, sizeof(line), file) != NULL) {
+        // Remove trailing newline characters
+        size_t len = strlen(line);
+        if (len > 0 && (line[len - 1] == '\n' || line[len - 1] == '\r')) {
+            line[len - 1] = '\0';
+        }
+
+        if (firstLine) {
+            // First line, handle it as a parameter
+            printf("First Line (Parameter): %s\n", line);
+            firstLine = 0;
+
+            cs = script->getSceneAtId(line,false);
+            if (cs) {
+                cc = getGlobalContext();
+                if (cc) {
+                    cc->flush();
+                }
+            }
+        } else {
+            if (cs && cc) {
+                // Subsequent lines, treat as attribute:value pairs
+                char *token = strtok(line, ":");
+                if (token != NULL) {
+                    char *attribute = token;
+                    char *value = strtok(NULL, ":");
+                    if (value != NULL) {
+                        printf("Attribute: %s, Value: %s\n", attribute, value);
+                        CAttr *attr = new CAttr(attribute,value);
+                        cc->addAttribute(attr);
+                    }
+                }
+            }
+        }
+    }
+
+    fclose(file);
+
+    if (cs) {
+        loadScene(cs);
+    }
+}
+
+void onLoad( ) {
+    printf("onLoad\n");
+    if (selectedSlot==-1) {
+        printf("no save slot selected\n");
+        return;
+    }
+    char tmp[256];
+    sprintf((char*)tmp,"savefile%d.txt",selectedSlot);
+    loadSaveFile(completePath((char*)tmp));
+}
+
+void onSave( ) {
+    printf("onSave\n");
+    if (selectedSlot==-1) {
+        printf("no save slot selected\n");
+        return;
+    }
+    // save the current screenshot for the savefile position
+    char tmp[256];
+    sprintf((char*)tmp,"screenshot%d.bmp",selectedSlot);
+    char source[256], destination[256];
+    strcpy((char*)source,completePath("screenshot.bmp"));
+    strcpy((char*)destination,completePath((char*)tmp));
+    copyFile(source,destination);
+
+    // save the position & the current attributes
+    char *strid = script->getCurrentMultilevelSceneId();
+    if (strid) {
+
+        sprintf((char*)tmp,"savefile%d.txt",selectedSlot);
+        FILE *file = fopen(completePath((char*)tmp), "w");
+        if (file == NULL) {
+            perror("Error opening file");
+            return;
+        }
+
+        fprintf(file,strid);
+        fprintf(file,"\n");
+
+        printf("save at position(%s)\n",strid);
+        CCurrentContext *cc = getGlobalContext();
+        if (cc) {
+            CAttr *attr = cc->mattributes;
+            while(attr) {
+                if (attr->mkey && attr->mvalue) {
+                    printf("save attribute key(%s) value(%s)\n",attr->mkey,attr->mvalue);
+                    fprintf(file,attr->mkey);
+                    fprintf(file,":");
+                    fprintf(file,attr->mvalue);
+                    fprintf(file,"\n");
+                }
+                attr = attr->mnext;
+            }
+        }
+
+        fclose(file);
+    }
 }
 
 // Function to copy a file from sourcePath to destinationPath
@@ -941,17 +1068,14 @@ void onMenuWindow( int x, int y ) {
     if (didTapButton(&saveButton,x,y)) {
         printf("saveButton tapped\n");
 
-        if (selectedSlot>-1) {
-            char modPath[256];
-            sprintf((char*)modPath,"screenshot%d.bmp",selectedSlot);
-            char source[256], destination[256];
-            strcpy((char*)source,completePath("screenshot.bmp"));
-            strcpy((char*)destination,completePath((char*)modPath));
-            copyFile(source,destination);
-        }
+        onSave();
 
     } else if (didTapButton(&loadButton,x,y)) {
         printf("loadButton tapped\n");
+
+        menu = false;
+        onLoad();
+
     } else if (didTapButton(&playButton,x,y)) {
         printf("playButton tapped\n");
         menu = false;
