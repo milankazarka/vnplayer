@@ -25,7 +25,8 @@ TTF_Font* font = NULL;
 const char* FONT_FILE = "Open_Sans/static/OpenSans_SemiCondensed-Bold.ttf";
 const int FONT_SIZE = 18;
 const int TEXT_OFFSET = 60;
-char *currentText = ""; 
+char *currentText = "";
+char *currentCharacter = NULL;
 char *currentMusicTrack = "";
 const int BUTTON_HEIGHT = 60;
 const int MIN_WINDOW_WIDTH = 800;
@@ -47,6 +48,8 @@ void onNextScene( );
 void saveScreenshot( );
 void loadSaveFile(const char *filePath);
 int copyFile(const char *sourcePath, const char *destinationPath);
+void renderTextWithColor(const char* text, int x, int y, int color);
+void renderTextWithRGB(const char* text, int x, int y, int r, int g, int b);
 
 typedef struct relativePosition {
     float x, y, w, h;
@@ -290,8 +293,13 @@ void renderText(const char* text, int x, int y) {
     SDL_DestroyTexture(textTexture);
 }
 
+// this is good if we want to print text in monochrome
 void renderTextWithColor(const char* text, int x, int y, int color) {
-    SDL_Color colorDef = {color, color, color};
+    renderTextWithRGB(text,x,y,color,color,color);
+}
+
+void renderTextWithRGB(const char* text, int x, int y, int r, int g, int b) {
+    SDL_Color colorDef = {r, g, b};
     SDL_Surface* textSurface = TTF_RenderText_Blended(font, text, colorDef);
     SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
     SDL_Rect textRect = {x, y, textSurface->w, textSurface->h};
@@ -614,7 +622,17 @@ void redraw() {
         int textY = windowHeight - (windowHeight * 25 / 100); // 25% from the bottom
         int lineHeight = TTF_FontLineSkip(font);
 
-        char* textCopy = strdup(currentText); //"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\nUt enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. "); // Make a copy of the text to avoid modifying the original
+        if (currentCharacter) {
+            printf("print character name(%s)\n",currentCharacter);
+            if (strlen(currentCharacter)) {
+                char tmp[256];
+                sprintf((char*)tmp,"%s:",currentCharacter);
+                renderTextWithRGB((char*)tmp,textX,textY,255,165,0);
+            }
+        }
+        textY+=lineHeight; 
+
+        char* textCopy = strdup(currentText);
         char* token = strtok(textCopy, " ");
             
         while (token != NULL) {
@@ -720,8 +738,15 @@ int setCurrentTextFromPage(CPage *page) {
     
     if (page->mchardata) {
         currentText = (char*)page->mchardata;
+        if (page->mepage->Attribute("character")) {
+            currentCharacter = (char*)page->mepage->Attribute("character");
+            printf("set the current character(%s)\n",currentCharacter);
+        } else {
+            currentCharacter = NULL;
+        }
     } else {
         currentText = "";
+        currentCharacter = NULL;
     }
 
     printf("setCurrentTextFromPage currentText(%s)\n",currentText);
@@ -1415,6 +1440,7 @@ int main(int argc, char* argv[]) {
                         onTap(event.button.x,event.button.y);
                     }
                 }
+                redraw();
             } else if (event.type == SDL_WINDOWEVENT) {
                 if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
                     // Window has been resized
@@ -1428,7 +1454,7 @@ int main(int argc, char* argv[]) {
             }
         }
 
-        redraw();
+        //redraw();
 
     }
 
