@@ -357,8 +357,27 @@ void renderBMPImage(const char* imagePath, SDL_Rect rect) {
     SDL_Texture* imageTexture = SDL_CreateTextureFromSurface(renderer, image);
     SDL_FreeSurface(image);
 
+    SDL_Rect srcRect;
+    srcRect.x = 0;
+    srcRect.y = 0;
+    SDL_QueryTexture(imageTexture, NULL, NULL, &srcRect.w, &srcRect.h);
+
+    if ((float)((float)srcRect.w/(float)srcRect.h)>(float)((float)rect.w/(float)rect.h)) {
+        // source is wider, sides will be cut
+        float cutout = (float)srcRect.h*(float)((float)rect.w/(float)rect.h);
+        srcRect.x = (srcRect.w-cutout)/2;
+        srcRect.w = cutout;
+        printf("adjusting src(%dx%d+%d+%d) dest(%dx%d) cutout(%f) dest_val(%d)\n",
+            srcRect.w,srcRect.h,srcRect.x,srcRect.y,rect.w,rect.h,cutout,rect.w/rect.h);
+    } else {
+        // destination is wider
+        float cutout = (float)srcRect.w*(float)((float)rect.h/(float)rect.w);
+        srcRect.y = (srcRect.h-cutout)/2;
+        srcRect.h = cutout;
+    }
+
     // Render the image
-    SDL_RenderCopy(renderer, imageTexture, NULL, &rect);
+    SDL_RenderCopy(renderer, imageTexture, &srcRect, &rect);
     SDL_DestroyTexture(imageTexture);
 }
 
@@ -551,6 +570,12 @@ void redraw() {
             sprintf((char*)modPath,"screenshot%d.bmp",n);
             renderBMPImage(completePath((char*)modPath),slots[n].rect);
         }
+
+        if (selectedSlot>-1) {
+            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 128);
+            SDL_RenderDrawRect(renderer, &slots[selectedSlot].rect);
+        }
+
     } else {
 
         // Calculate aspect-fill scaling based on the current window size
@@ -694,10 +719,6 @@ void redraw() {
 
         free(textCopy);
 
-        //numChoicesDisplayed = 0;
-        //renderChoiceButton("choice 1");
-        //renderChoiceButton("choice 2");
-
         numChoicesDisplayed = 0;
         //printf("query choice buttons\n");
         for(int n = 0; n < nchoices; n++) {
@@ -773,12 +794,6 @@ int setCurrentOverlaysFromPage(CPage *page) {
     {
         int n = 0;
         
-        /** for(n = 0; n < [self.moverlays count]; n++ )
-        {
-            COverlayView *ov = [self.moverlays objectAtIndex:n];
-            if (ov)
-                ov.doclear = YES;
-        } */
         for(n = 0; n < 6; n++) {
             if (overlays[n].texture) {
                 SDL_DestroyTexture(overlays[n].texture);
@@ -839,10 +854,34 @@ int playCurrentSceneMusic(CScene *scene) {
     return 0;
 }
 */
+
+int playCurrentEffectFromPage(CPage *page) {
+    if (!page)
+        return 0;
+
+    if (page->mmusiceffect) {
+        
+        CMusicInfo *current = page->mmusiceffect->mmusicinfo;
+        while(current) {
+
+            if (current->memusic->Attribute("filename")) {
+                Mix_Music* music = Mix_LoadMUS(completePath(current->memusic->Attribute("filename")));
+                if (music) {
+                    Mix_PlayMusic(music, 1); // only play once
+                }
+            }
+
+            current = current->mnext;
+        }
+    }
+
+    return 1;
+}
+
 int setCurrentPage(CPage *page) {
     printf("setCurrentPage\n");
     if (!page)
-        return -1;
+        return 0;
 
     //[self setCurrentTextFromPage:page];
     //[self setCurrentOverlaysFromPage:page];
@@ -853,7 +892,7 @@ int setCurrentPage(CPage *page) {
     //[self playCurrentMusicEffectsFromPage:page];
     //[self playCurrentVideoEffectsFromPage:page];
 
-    return 0;
+    return 1;
 }
 
 int playSceneMusic(CScene *scene) {
@@ -885,7 +924,6 @@ int onLastOfScene( ) {
                 nchoices = 0;
                 numChoicesDisplayed = 0;
                 if (echoicedef->Attribute("message")) {
-                    //renderChoiceButton(echoicedef->Attribute("message"));
                     strcpy((char*)choices[nchoices],echoicedef->Attribute("message"));
                     nchoices++;
                 } while(1) {
@@ -914,7 +952,6 @@ int onLastOfScene( ) {
             if (gotoscene)
             {
                 script->setScene(gotoscene);
-                //[self loadScene:gotoscene];
                 loadScene(gotoscene);
                 return 1;
             }
@@ -980,7 +1017,6 @@ int onLastOfScene( ) {
                                 if (gotoscene)
                                 {
                                     script->setScene(gotoscene);
-                                    //[self loadScene:gotoscene];
                                     loadScene(gotoscene);
                                     return 1;
                                 }
