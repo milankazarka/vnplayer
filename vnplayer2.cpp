@@ -11,6 +11,7 @@
 #include "engine/CCurrentContext.h"
 
 #define _VERBOSE_RENDER_NO
+#define _VERTICAL_MODE_ENABLED
 
 SDL_Texture* bgImageTexture = NULL;
 SDL_Texture* testImageTexture = NULL;
@@ -479,14 +480,21 @@ void renderOverlay(overlay *ol) {
     // Calculate aspect-fit scaling based on the relative position and size
     float imageAspectRatio = (float)srcRect.w / srcRect.h;
     float destAspectRatio = (float)destRect.w / destRect.h;
-
+    
+    // we override this so that we can display the VN in vertical mode
+#ifndef _VERTICAL_MODE_ENABLED
+    
     if (imageAspectRatio > destAspectRatio) {
         // Image is wider than the destination rect
+        printf("image is wider than destination\n");
         destRect.h = (int)(destRect.w / imageAspectRatio);
     } else {
+#endif
         // Image is taller than the destination rect
         destRect.w = (int)(destRect.h * imageAspectRatio);
+#ifndef _VERTICAL_MODE_ENABLED
     }
+#endif
 
     destRect.x = destRect.x + (int)((ol->relative.w * windowWidth - destRect.w) / 2);
     destRect.y = destRect.y + (int)((ol->relative.h * windowHeight - destRect.h) / 2);
@@ -613,6 +621,7 @@ void redraw() {
 
         int n;
         for(n = 0; n < 6; n++) {
+            // #todo - do a function for rendering layers like we have with renderOverlay()
             SDL_QueryTexture(laImageTexture[n], NULL, NULL, &srcRect.w, &srcRect.h);
             imageAspectRatio = (float)srcRect.w / srcRect.h;
             windowAspectRatio = (float)windowWidth / windowHeight;
