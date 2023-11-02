@@ -1231,9 +1231,13 @@ void onNextScene( ) {
         if (script->mcurrentScene->mparent!=script->mscope) {
             // ending
             gameEnd = true;
-            redraw();
-            return;
+        } else {
+            printf("also end of game\n");
+            // #todo - probably good ending
+            gameEnd = true; // #todo make a different view for this
         }
+        redraw();
+        return;
     }
     loadScene(scene);
 }
