@@ -38,6 +38,8 @@ bool menu = true; // is the menu displayed or not
 int selectedSlot = -1;
 const int MAX_SAVEFILE_LINE_LENGTH = 256;
 bool playPressed = false;
+bool gameEnd = false; // did we reach the ending? this is the alert showing that we reached the end
+bool bcontinue = false; // do we show "start" or "continue"
 
 char* constructFilePath(const char* directory, const char* filename, char* buffer, size_t bufferSize);
 char* completePath(const char* filename); // not thread safe, just uses workingDirectory & filenameBuffer
@@ -65,10 +67,11 @@ overlay overlays[6];
 typedef struct uiButton {
     SDL_Rect rect;
     char text[64];
-    int tag; // identifier of the button
+    int tag = 0; // identifier of the button
     bool hidden;
     int bgColor; // 0-255
     int fgColor; // 0-255
+    int bgAlpha = 64;
 } uiButton;
 
 typedef struct saveSlot {
@@ -78,7 +81,7 @@ typedef struct saveSlot {
 
 bool didTapButton( uiButton *button, int x, int y ) {
     if (!button)
-        false;
+        return false;
     if (button->hidden)
         return false;
     if (x>button->rect.x && x<button->rect.x+button->rect.w && y>button->rect.y && y<button->rect.y+button->rect.h)
@@ -91,6 +94,7 @@ uiButton saveButton;
 uiButton playButton; // start/continue
 uiButton restartButton;
 uiButton menuButton;
+uiButton gameendButton;
 saveSlot slots[6];
 
 char *constructFilePath(const char* directory, const char* filename, char* buffer, size_t bufferSize) {
@@ -334,7 +338,7 @@ void renderUIButton(uiButton *buttonDef) {
     if (buttonDef->hidden)
         return;
     // Draw a semi-transparent black rectangle
-    SDL_SetRenderDrawColor(renderer, buttonDef->bgColor, buttonDef->bgColor, buttonDef->bgColor, 64);
+    SDL_SetRenderDrawColor(renderer, buttonDef->bgColor, buttonDef->bgColor, buttonDef->bgColor, buttonDef->bgAlpha);
     SDL_RenderFillRect(renderer, &buttonDef->rect);
 
     SDL_Surface* textSurface = TTF_RenderText_Solid(font, (char*)buttonDef->text, (SDL_Color){buttonDef->fgColor, buttonDef->fgColor, buttonDef->fgColor, 255});
@@ -523,6 +527,9 @@ void redraw() {
         renderUIButton(&loadButton);
         playButton.rect.x = windowWidth-playButton.rect.w-20;
         playButton.rect.y = windowHeight-80;
+        if (bcontinue) {
+            strcpy((char*)playButton.text,"continue");
+        }
         renderUIButton(&playButton);
         restartButton.rect.x = playButton.rect.x-restartButton.rect.w-20;
         restartButton.rect.y = windowHeight-80;
@@ -643,6 +650,13 @@ void redraw() {
             SDL_RenderDrawLine(renderer, 0, y, windowWidth, y);
         }
 
+        // Create a black gradient with varying alpha from the top to 10% of the screen height
+        for (int y = 0; y <= windowHeight * 0.1; y++) {
+            float alpha = y/(windowHeight * 0.1);
+            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255-(alpha*255));
+            SDL_RenderDrawLine(renderer, 0, y, windowWidth, y);
+        }
+
         int textX = TEXT_OFFSET; // offset from the sides
         int textY = windowHeight - (windowHeight * 25 / 100); // 25% from the bottom
         int lineHeight = TTF_FontLineSkip(font);
@@ -727,6 +741,21 @@ void redraw() {
         }
 
         renderUIButton(&menuButton);
+
+        if (gameEnd) {
+            gameendButton.rect.x = (windowWidth/2)-(gameendButton.rect.w/2);
+            gameendButton.rect.y = (windowHeight/2)-(gameendButton.rect.h/2);
+            SDL_Rect rect;
+            rect.x = gameendButton.rect.x-20;
+            rect.y = gameendButton.rect.y-20;
+            rect.w = gameendButton.rect.w+40;
+            rect.h = gameendButton.rect.h+40;
+            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 20);
+            SDL_RenderFillRect(renderer, &rect);
+            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 60);
+            SDL_RenderDrawRect(renderer, &gameendButton.rect);
+            renderUIButton(&gameendButton);
+        }
 
     } // menu yes/no
 
@@ -883,8 +912,6 @@ int setCurrentPage(CPage *page) {
     if (!page)
         return 0;
 
-    //[self setCurrentTextFromPage:page];
-    //[self setCurrentOverlaysFromPage:page];
     setCurrentTextFromPage(page);
     setCurrentOverlaysFromPage(page);
     //playCurrentMusic(page);
@@ -897,6 +924,11 @@ int setCurrentPage(CPage *page) {
 
 int playSceneMusic(CScene *scene) {
     if (scene->mmusicinfo) {
+        if (strlen(scene->mmusicinfo->memusic->Attribute("filename"))==0) {
+            Mix_PauseMusic();
+            return 0;
+        }
+
         if (strcmp(scene->mmusicinfo->memusic->Attribute("filename"),currentMusicTrack)!=0) {
             printf("playCurrentMusic filename(%s)\n",scene->mmusicinfo->memusic->Attribute("filename"));
             
@@ -906,6 +938,8 @@ int playSceneMusic(CScene *scene) {
             }
             currentMusicTrack = (char*)scene->mmusicinfo->memusic->Attribute("filename");
         }
+    } else {
+        Mix_PauseMusic();
     }
     return 0;
 }
@@ -1185,6 +1219,12 @@ void onNextScene( ) {
     if (scene) {
         scene->rewind();
     } else {
+        if (script->mcurrentScene->mparent!=script->mscope) {
+            // ending
+            gameEnd = true;
+            redraw();
+            return;
+        }
     }
     loadScene(scene);
 }
@@ -1207,14 +1247,15 @@ void onMenuWindow( int x, int y ) {
 
     } else if (didTapButton(&loadButton,x,y)) {
         printf("loadButton tapped\n");
-        
-        menu = false;
-        onLoad();
-
+        if (selectedSlot>-1) {
+            menu = false;
+            onLoad();
+        }
     } else if (didTapButton(&playButton,x,y)) {
         printf("playButton tapped\n");
         
         menu = false;
+        bcontinue = true;
         Mix_ResumeMusic();
         redraw();
     } else if (didTapButton(&restartButton,x,y)) {
@@ -1240,6 +1281,19 @@ void onMenu( ) {
 
 void onTap( int x, int y ) {
     printf("onTap\n");
+
+    if (gameEnd) {
+        if (didTapButton(&gameendButton,x,y)) {
+            gameEnd = false;
+
+            CScene *scene = script->rewind();
+            scene->rewind();
+            loadScene(scene);
+
+            return;
+        }
+        return; // we lock you in at the ending - you can't go to the menu unless you press the restart button
+    }
 
     if (didTapButton(&menuButton,x,y)) {
         onMenu();
@@ -1360,11 +1414,21 @@ int main(int argc, char* argv[]) {
     menuButton.rect.x = 10;
     menuButton.rect.y = 10;
     menuButton.rect.w = 90;
-    menuButton.rect.h = 40;
+    menuButton.rect.h = 30;
     menuButton.bgColor = 0;
+    menuButton.bgAlpha = 0;
     menuButton.fgColor = 200;
     menuButton.hidden = false;
     //
+    gameendButton.tag = 100;
+    strcpy(gameendButton.text,"restart");
+    gameendButton.rect.x = 0;
+    gameendButton.rect.y = 0;
+    gameendButton.rect.w = 120;
+    gameendButton.rect.h = 40;
+    gameendButton.bgColor = 0;
+    gameendButton.fgColor = 255;
+    gameendButton.hidden = false;
 
     loadScript("script_tears01-vnp.xml");
     CScene *scene = script->rewind();
