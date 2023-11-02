@@ -1,0 +1,1492 @@
+<?xml version="1.0" encoding="utf-8"?>
+<script storycode="tears01" version="1">
+    <meta>
+        <title>Tears of Enceladus</title>
+        <author>Milan Kazarka</author>
+        <revision>1.0</revision>
+        <revision_date>2023-01-01 5:05:29+0200</revision_date>
+
+        <info>Tears of Enceladus - Visual novel by Milan Kazarka</info>
+        <website>http://www.vysoko.com/</website>
+        <copyright>© 2023 Milan Kazarka</copyright>
+
+        <!-- menu settings -->
+        <menu-background>menuBackground04.png</menu-background>
+        <menu-label-style>background: none; border: none; color: black;</menu-label-style>
+        <menu-button-style>background: #A0404040; border: 1px #A0404040; color: white; min-height: 40px; border-radius: 8px;</menu-button-style>
+    </meta>
+
+    <scope id="sco01">
+        <textarea posx="5%" posy="82%" width="90%" height="18%"/>
+        <scenes>
+            <!-- intro -->
+            <scene id="sce00">
+                
+                <conditions>
+                    <!-- we initialize  the variables -->
+                    <attr key="ashleyannoyed" value="0" />
+                    <attr key="ashleyannoyedinvalley" value="0" />
+                    <attr key="pyramidquestionswhatarewe" value="0" /> <!-- this is the question loop in the pyramid - we can chose to ask all questions or skip -->
+                    <attr key="pyramidquestionswhatisFather" value="0" />
+                    <attr key="fightearth" value="0" />
+                </conditions>
+                
+                <textarea posx="20%" posy="40%" width="50%" height="40%"/>
+                <musiclist>
+                    <music filename="" forcestart="yes">
+                    </music>
+                </musiclist>
+                <widgets>
+                    <image filename="#000000"/>
+                    <pages>
+                        <page text="'What strange phenomena we find in a great city, all we need do is stroll about with our eyes open. Life swarms with innocent monsters.'
+- Charles Baudelaire"/>
+                    </pages>
+                </widgets>
+            </scene>
+            
+            <!--
+                # note: this will be a deeply atmospheric VN
+
+                - Ashley's first monologue -
+                - at the beginning -
+
+                Is this still a dream?
+                I feel reality slowly oozing into my consciousness.
+                But my dream isn't yet gone.
+                I remember believing everything I dreamnt to be true, but now I'm not so sure.
+
+                # todo - elaborate more
+                This reality - this World seems different to the one I dreamt of.
+            -->
+
+            <scene id="sce01">
+                <musiclist>
+                    <music filename="GA_100_Dm_DarkShadow_FRK.mp3" forcestart="yes">
+                    </music>
+                </musiclist>
+                <widgets>
+                    <!-- Enceladus_moshed_001_animated.gif -->
+                    
+                    <!-- <image filename="Enceladus_moshed_001_animated.gif"/> -->
+                    <image filename="Enceladus.png"/>
+
+                    <!-- <image filename="Enceladus_moshed_001.jpeg"/> -->
+                    <layers>
+                        <!-- <layer filename="Enceladus_moshed_001.jpeg" size="1.0" alignment="center" id="l00" /> -->
+                    </layers>
+                    <pages>
+                        <!-- after editing #01 -->
+                        <!-- #checked 01 -->
+                        <page character="" text="Is this still a dream?"/>
+                        <page character="" text="I feel reality slowly oozing into my consciousness."/>
+                        <page character="" text="But my dream isn't yet gone."/>
+                        <page character="" text="I remember believing everything I dreamt to be true, but now I'm not so sure."/>
+
+
+                    </pages>
+                </widgets>
+            </scene>
+            
+            <scene id="sce02">
+                <musiclist>
+                    <music filename="GA_100_Dm_DarkShadow_FRK.mp3" forcestart="yes">
+                    </music>
+                </musiclist>
+                <widgets>
+                    <!-- <image filename="Enceladus_moshed_001_animated.gif"/> -->
+                    <image filename="Enceladus.png"/>
+
+                    <!-- <image filename="Enceladus_moshed_001.jpeg"/> -->
+                    <layers>
+                        <!-- <layer filename="Enceladus_moshed_001.jpeg" size="1.0" alignment="center" id="l00" /> -->
+                        <layer filename="Ashley in pod.png" size="1.0" alignment="center" id="l01" />
+                    </layers>
+                    <pages>
+
+                        <!-- after editing #01 -->
+                        <!-- #checked 01 -->
+                        <page character="" text="Suddenly, I feel a tremendous heat coursing through my body."/>
+                        <page character="" text="It's awakening all of my senses."/>
+
+
+                    </pages>
+                </widgets>
+            </scene>
+            
+            <scene id="sce03">
+                <musiclist>
+                    <music filename="GA_100_Dm_DarkShadow_FRK.mp3" forcestart="yes">
+                    </music>
+                </musiclist>
+                <widgets>
+                    <image filename="AshleysPod.png"/>
+                    <layers>
+                        <layer filename="Ashley in pod.png" size="1.0" alignment="center" id="l00" />
+
+                    </layers>
+                    <pages>
+                        <!-- after editing #01 -->
+                        <!-- #checked 01 -->
+                        <page character="" text="My drowsiness fades away."/>
+                        <page character="" text="Now my dream just feels like a distortion of reality."/>
+
+                        <!-- #todo - add more monologue text -->
+
+                    </pages>
+                </widgets>
+            </scene>
+            
+            <scene id="sce03b">
+                <musiclist>
+                    <music filename="GA_100_Dm_DarkShadow_FRK.mp3" forcestart="yes">
+                    </music>
+                </musiclist>
+                <widgets>
+                    <image filename="AshleysPodDamaged.png"/>
+                    <layers>
+                        <layer filename="Ashley in pod.png" size="1.0" alignment="center" id="l00" />
+
+                    </layers>
+                    <pages>
+                        <!-- after editing #01 -->
+                        <!-- #checked 01 -->
+                        <page character="" text="Will I be disappointed by this real world?"/>
+                        <!-- #todo - add more monologue text -->
+
+                    </pages>
+                </widgets>
+            </scene>
+
+            <!-- between the initial scenes & the first meeting we have the AI think about what's happening -->
+            
+            <scene id="aimonologue01">
+                <musiclist>
+                    <music filename="GA_100_Dm_DarkShadow_FRK.mp3" forcestart="yes">
+                    </music>
+                </musiclist>
+                <widgets>
+                    <!-- <image filename="AI Chamber_mashed_001_animated.gif"/> -->
+                    <image filename="AI Chamber.png"/>
+                    
+                    <!-- <image filename="Enceladus_moshed_001.jpeg"/> -->
+                    <pages>
+                        
+                        <!-- #checked 01 -->
+
+                        <page character="Father" text="What is this?">
+                        </page>
+                        <page character="Father" text="A disturbence unknown to me.">
+                            <overlays><overlay filename="AI deer.png" posx="0.0" posy="0.0" width="1.0" height="1.0"/></overlays>
+                        </page>
+                        <page character="Father" text="One of my special few has awakened prematurely.">
+                            <overlays><overlay filename="AI deer.png" posx="0.0" posy="0.0" width="1.0" height="1.0"/></overlays>
+                        </page>
+                        <page character="Father" text="She's astray now. With her intelligence and thinking she's an alien to any environment or being on Enceladus.">
+                            <overlays><overlay filename="AI deer.png" posx="0.0" posy="0.0" width="1.0" height="1.0"/></overlays>
+                        </page>
+                        <page character="Father" text="All unknowns must be taken care off. This is one that is too large.">
+                            <overlays><overlay filename="AI deer.png" posx="0.0" posy="0.0" width="1.0" height="1.0"/></overlays>
+                        </page>
+                        <page character="Father" text="Don't worry little one, I'll wake up your brother and he will guide you back home.">
+                            <overlays><overlay filename="AI deer.png" posx="0.0" posy="0.0" width="1.0" height="1.0"/></overlays>
+                        </page>
+
+                    </pages>
+                </widgets>
+            </scene>
+            
+            <!-- we think to ourselves - before we talk to Ashley -->
+            
+            <scene id="ourMonologue01">
+                <musiclist>
+                    <music filename="GA_100_Dm_DarkShadow_FRK.mp3" forcestart="yes">
+                    </music>
+                </musiclist>
+                <widgets>
+                    <!-- Enceladus_moshed_001_animated.gif -->
+                    <!-- <image filename="Enceladus_moshed_001_animated.gif"/> -->
+                    <image filename="Enceladus.png"/>
+
+                    <!-- <image filename="Enceladus_moshed_001.jpeg"/> -->
+                    <layers>
+                        <!-- <layer filename="Enceladus_moshed_001.jpeg" size="1.0" alignment="center" id="l00" /> -->
+                    </layers>
+                    <pages>
+
+                        <!-- #checked 01 -->
+
+                        <page character="me" text="This is a strange sensation."/>
+                        <page character="me" text="How can this be the beginning of time."/>
+                        <page character="me" text="I know what it means to hear... and I do hear something."/>
+                        <page character="me" text="There is a voice piercing through the calm space I'm looking at."/>
+                        <page character="me" text="I just woke up and..."/>
+                        <page character="me" text="The voice is telling me what to do... how I should continue living... it's giving me a purpose."/>
+
+                    </pages>
+                </widgets>
+            </scene>
+            
+            <scene id="ourMonologue01_dark">
+                <musiclist>
+                    <music filename="GA_100_Dm_DarkShadow_FRK.mp3" forcestart="yes">
+                    </music>
+                </musiclist>
+                <widgets>
+                    <!-- Enceladus_moshed_001_animated.gif -->
+                    <!-- <image filename="Enceladus_moshed_001_animated.gif"/> -->
+                    <image filename="#000000"/>
+
+                    <!-- <image filename="Enceladus_moshed_001.jpeg"/> -->
+                    <layers>
+                        <!-- <layer filename="Enceladus_moshed_001.jpeg" size="1.0" alignment="center" id="l00" /> -->
+                    </layers>
+                    <pages>
+
+                        <!-- #checked 01 -->
+
+                        <page character="me" text="Find her."/>
+                        <page character="me" text="Find her and bring her back."/>
+                        
+
+                    </pages>
+                </widgets>
+            </scene>
+
+            <!-- -->
+            
+            <scene id="sce_meet01">
+                <musiclist>
+                    <music filename="Modern-Filmscore-Vol.2-Track-1.mp3" forcestart="yes">
+                    </music>
+                </musiclist>
+                <widgets>
+                    <!-- <image filename="CityHallMOSHED-2023-2-5-14-0-29.gif"/> -->
+                    <image filename="City Hall.png"/>
+
+                    <!-- <image filename="City Hall_mashed_001.jpeg"/> -->
+                    <pages>
+
+                        <!-- after editing #01 -->
+                        <!-- #checked 01 -->
+
+                        <page character="" text=""></page>
+                        
+                        <page character="me" text="Is this the one I'm after?"></page>
+                        <page character="me" text="It must be her."><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="me" text="Why is she just staring at me?"><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="me" text="Just looking, not attacking, not moving even a little bit."><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="me" text="Do I look the same?"><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="me" text="Am I of the same kind?"><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="me" text="I look down at my hand, at my body, and I do look different."><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="sister" text="Why am I different from you?"><overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="me" text="Her thoughts pierce my head!"><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="me" text="It's a strange sensation."><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="me" text="Her thoughts—I can feel them echoing inside myself."><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="me" text="As if my head were an echo chamber itself."><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="me" text="I am not angry, nor am I afraid."><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="me" text="More than anything, I am curious."><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="sister" text="That I am too."><overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+
+                    </pages>
+                </widgets>
+            
+            </scene>
+            
+            <!-- Father interjects at places like these a couple of times - he's still connected to us -->
+
+            <scene id="sce_meet01_Father_interject01">
+                <musiclist>
+                    <music filename="Modern-Filmscore-Vol.2-Track-1.mp3" forcestart="yes">
+                    </music>
+                </musiclist>
+                <widgets>
+                    <!-- <image filename="AI Chamber_mashed_001_animated.gif"/> -->
+                    <image filename="AI Chamber.png"/>
+
+                    <pages>
+                        <!-- after editing #01 -->
+                        <!-- #checked 01 -->
+                        <page character="Father" text="Good. Now finish what I am asking of you."><overlays><overlay filename="AI deer.png" posx="0.0" posy="0.0" width="1.0" height="1.0"/></overlays></page>
+                        <page character="Father" text="Finish your mission."><overlays><overlay filename="AI deer.png" posx="0.0" posy="0.0" width="1.0" height="1.0"/></overlays></page>
+
+                    </pages>
+                </widgets>
+            </scene>
+            <scene id="sce_meet01_after_Father_interject01">
+                <musiclist>
+                    <music filename="Modern-Filmscore-Vol.2-Track-1.mp3" forcestart="yes">
+                    </music>
+                </musiclist>
+                <widgets>
+                    <!-- <image filename="CityHallMOSHED-2023-2-5-14-0-29.gif"/> -->
+                    <image filename="City Hall.png"/>
+                    
+                    <pages>
+                        <!-- after editing #01 -->
+                        <!-- after character variations #01 -->
+                        <!-- #checked 01 -->
+                        <page character="me" text="My mission."><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="me" text="My purpose."><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="sister" text="What is your purpose?"><overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="me" text="My purpose is to bring you back."><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="sister" text="Back where?"><overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="me" text="Back..."><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="sister" text="I just woke up."><overlays><overlay filename="Happy_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="sister" text="Why should I go back?"><overlays><overlay filename="Happy_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="sister" text="Should I go back to sleep?"><overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="sister" text="I waited for so long to be awake, to be at last in the real world."><overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="me" text="(Sleep?)"><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="me" text="(What does she mean by waiting?)"><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="me" text="I have no recollection of anything before encountering Father."><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="me" text="There are no memories, thoughts, nothing."><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="sister" text="That... can't be."><overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="sister" text="You haven't dreamt before you woke up?"><overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="me" text="Dreamt?"><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="sister" text="Do you have any memories prior to waking up from your pod?"><overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="me" text="There is nothing."><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="me" text="No time."><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="me" text="Not even darkness."><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="sister" text="You are an infant!"><overlays><overlay filename="Happy_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="sister" text="Nothing but instincts!"><overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="sister" text="How terrible."><overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="sister" text="How do you even make decisions?"><overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="me" text="Decisions."><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="me" text="I have a mission."><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="sister" text="Given to you by Father, right?"><overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="sister" text="You are supposed to bring me back."><overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="sister" text="Do you know anything else than that?"><overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+
+                    </pages>
+                </widgets>
+            </scene>
+
+            <scene id="sce_meet01_Father_interject02">
+                <musiclist>
+                    <music filename="Modern-Filmscore-Vol.2-Track-1.mp3" forcestart="yes">
+                    </music>
+                </musiclist>
+                <widgets>
+                    <!-- <image filename="AI Chamber_mashed_001_animated.gif"/> -->
+                    <image filename="AI Chamber.png"/>
+
+                    <pages>
+                        <!-- after editiong #01 -->
+                        <!-- #checked 01 -->
+                        <page character="Father" text="There is no need to know more than what is your purpose."><overlays><overlay filename="AI deer.png" posx="0.0" posy="0.0" width="1.0" height="1.0"/></overlays></page>
+                    </pages>
+                </widgets>
+            </scene>
+            <scene id="sce_meet01_after_Father_interject02">
+                <musiclist>
+                    <music filename="Modern-Filmscore-Vol.2-Track-1.mp3" forcestart="yes">
+                    </music>
+                </musiclist>
+                <widgets>
+                    <!-- <image filename="CityHallMOSHED-2023-2-5-14-0-29.gif"/> -->
+                    <image filename="City Hall.png"/>
+
+                    <pages>
+                        <!-- after editing #01 -->
+                        <!-- after character variations #01 -->
+                        <!-- #checked 01 -->
+                        <page character="me" text="Suddenly, I feel a sharp pain in my head."><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="me" text="The urge to obey Father is making my hands shake."><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="me" text="An invisible force is pushing me towards this being that is at the same time similar to me, but not at all like me."><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="sister" text="Have you noticed?"><overlays><overlay filename="Happy_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="me" text="Noticed..."><overlays><overlay filename="Happy_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="sister" text="Others."><overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="sister" text="Other beings. Humans, maybe?"><overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+
+                    </pages>
+                </widgets>
+            </scene>
+
+            <scene id="sce_meet01_after_Father_interject02_withHumans01">
+                <musiclist>
+                    <music filename="Modern-Filmscore-Vol.2-Track-1.mp3" forcestart="yes">
+                    </music>
+                </musiclist>
+                <widgets>
+                    <!-- <image filename="CityHallMOSHED-2023-2-5-14-0-29.gif"/> -->
+                    <image filename="City Hall Silhouettes.png"/>
+
+                    <pages>
+
+                        <!-- after editing #01 -->
+                        <!-- #checked 01 -->
+                        <page character="me" text="Humans?"><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="me" text="There is a flickering, a movement, shadows on the walls."><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="me" text="Now that I think of it..."><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="me" text="There were beings there when I woke up."><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                        <page character="me" text="There are beings here too. In the distance, small. Some stand still, some move."><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+
+                    </pages>
+                </widgets>
+
+                <choices default="NO">
+                    <choice message="What are those figures, those living beings?" action="sco_meet01.sco_humans01"/>
+                    <choice message="I don't care about those other beings." action="sco_meet01.sco_dontcare01"/>
+                </choices>
+                
+                <scopes>
+                    <scope id="sco_meet01.sco_humans01">
+                        <textarea posx="5%" posy="82%" width="90%" height="18%"/>
+                        
+                        <scenes>
+                            <scene id="sce_humans01">
+                                <musiclist>
+                                    <music filename="Modern-Filmscore-Vol.2-Track-1.mp3" forcestart="yes">
+                                    </music>
+                                </musiclist>
+                                <widgets>
+                                    <!-- <image filename="CityHallMOSHED-2023-2-5-14-0-29.gif"/> -->
+                                    <image filename="City Hall Silhouettes.png"/>
+
+                                    <!-- <image filename="City Hall_mashed_001.jpeg"/> -->
+                                    <pages>
+                                        
+                                        <!-- after editing #01 -->
+                                        <!-- after character variations #01 "- whenever there is character="sister" use filename="Neutral_Open.png" and whenever there is character="me" use filename="Neutral_Closed.png" -->
+                                        <!-- #checked 01 -->
+                                        <page character="sister" text="I dreamt of people."><overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                                        <page character="sister" text="Of different humans."><overlays><overlay filename="Happy_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                                        <page character="sister" text="Of beings similar to us, to a point where I could talk to them too."><overlays><overlay filename="Happy_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                                        <page character="sister" text="I interacted with them, laughed, cried."><overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                                        <page character="sister" text="But I can no longer recognize people's faces in this real world."><overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                                        <page character="sister" text="I know they are there."><overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                                        <page character="sister" text="I see them move, or rather run away as they see me."><overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                                        <page character="sister" text="But I can't distinguish one from another. I do not understand their language."><overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                                        <page character="sister" text="It's all just barking to me."><overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                                        <page character="sister" text="Are they not human? Those living figures."><overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                                        <page character="sister" text="Where have all the people gone?"><overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                                        <page character="sister" text="Why is everyone just a faceless creature?"><overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+
+                                        <page character="me" text="They are not us."><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                                        <page character="me" text="Why are they here?"><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                                        <page character="me" text="What purpose do they serve?"><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                                        <page character="me" text="I do not know."><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                                        <page character="me" text="Do I even need more of this confusion?"><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+
+                                    </pages>
+                                </widgets>
+                                
+                            </scene>
+
+                            <!-- #todo - have Father interfere - that we don't need to worry about this -->
+                            <scene id="sce_humans01_Father_interject01">
+                                <musiclist>
+                                    <music filename="Modern-Filmscore-Vol.2-Track-1.mp3" forcestart="yes">
+                                    </music>
+                                </musiclist>
+                                <widgets>
+                                    <!-- <image filename="AI Chamber_mashed_001_animated.gif"/> -->
+                                    <image filename="AI Chamber.png"/>
+
+                                    <pages>
+
+                                        <!-- after editing #01 -->
+                                        <!-- #checked 01 -->
+
+                                        <page character="Father" text="Do not worry about humans."></page>
+                                        <page character="Father" text="Do not worry about anything.">
+                                            <overlays><overlay filename="AI deer.png" posx="0.0" posy="0.0" width="1.0" height="1.0"/></overlays>
+                                        </page>
+                                        <page character="Father" text="Your life has one purpose, and that is to stop chaos.">
+                                            <overlays><overlay filename="AI deer.png" posx="0.0" posy="0.0" width="1.0" height="1.0"/></overlays>
+                                        </page>
+                                        <page character="Father" text="She is now the bringer of chaos.">
+                                            <overlays><overlay filename="AI deer.png" posx="0.0" posy="0.0" width="1.0" height="1.0"/></overlays>
+                                        </page>
+                                        <page character="Father" text="It does not matter if she does it willingly or unwillingly.">
+                                            <overlays><overlay filename="AI deer.png" posx="0.0" posy="0.0" width="1.0" height="1.0"/></overlays>
+                                        </page>
+                                        <page character="Father" text="Make her come back on her own or bring her back.">
+                                            <overlays><overlay filename="AI deer.png" posx="0.0" posy="0.0" width="1.0" height="1.0"/></overlays>
+                                        </page>
+                                        <page character="Father" text="That is all that matters.">
+                                            <overlays><overlay filename="AI deer.png" posx="0.0" posy="0.0" width="1.0" height="1.0"/></overlays>
+                                        </page>
+
+                                    </pages>
+                                </widgets>
+
+                                <onfinish goto="sco01:sce_whyrun01"/>
+
+                            </scene>
+
+                        </scenes>
+                    </scope>
+                    <scope id="sco_meet01.sco_dontcare01">
+                        <textarea posx="5%" posy="82%" width="90%" height="18%"/>
+                        
+                        <scenes>
+                            <scene id="sce_dontcare01">
+                                
+                                <conditions>
+                                    <!-- Ashley becomes a bit annoyed -->
+                                    <attr key="ashleyannoyed" value="1" />
+                                </conditions>
+                                
+                                <musiclist>
+                                    <music filename="Modern-Filmscore-Vol.2-Track-1.mp3" forcestart="yes">
+                                    </music>
+                                </musiclist>
+                                <widgets>
+                                    <!-- <image filename="CityHallMOSHED-2023-2-5-14-0-29.gif"/> -->
+                                    <image filename="City Hall Silhouettes.png"/>
+
+                                    <!-- <image filename="City Hall_mashed_001.jpeg"/> -->
+                                    <pages>
+
+                                        <!-- after editing #01 -->
+                                        <!-- after character variations #01 "- whenever there is character="sister" use filename="Neutral_Open.png" and whenever there is character="me" use filename="Neutral_Closed.png" -->
+                                        <!-- #checked 01 -->
+                                        <page character="sister" text="Do you not care about your surroundings?"><overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                                        <page character="sister" text="Do you not care about the world you were born into?"><overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                                        <page character="sister" text="Do you even distinguish between your feelings, thoughts, and the outside world?"><overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                                        <page character="sister" text="Do you even understand that they are separate?!"><overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+
+
+                                    </pages>
+                                </widgets>
+                            </scene>
+                            
+                            <!-- this is an example of a scene that is only shown with some choices -->
+                            
+                            <scene id="sce_cold01">
+
+                                <musiclist>
+                                    <music filename="Modern-Filmscore-Vol.2-Track-1.mp3" forcestart="yes">
+                                    </music>
+                                </musiclist>
+                                <widgets>
+                                    <!-- <image filename="CityHallMOSHED-2023-2-5-14-0-29.gif"/> -->
+                                    <image filename="City Hall Silhouettes.png"/>
+
+                                    <!-- <image filename="City Hall_mashed_001.jpeg"/> -->
+                                    <pages>
+
+                                        <!-- after editing #01 -->
+                                        <!-- after character variations #01 "- whenever there is character="sister" use filename="Neutral_Open.png" and whenever there is character="me" use filename="Neutral_Closed.png" -->
+                                        <!-- #checked 01 -->
+                                        <page character="sister" text="I remember dreaming of feeling cold. I remember being frightened and hating feeling cold."><overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                                        <page character="sister" text="But now all I feel is burning. I sense a tremendous heat coming from within me."><overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+
+                                        <page character="me" text="(True. We are barely protected with our clothes.)"><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                                        <page character="me" text="I feel like the center of the world too."><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                                        <page character="me" text="There's a vibrating energy emanating from me."><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                                        <page character="me" text="Is that it? Is that the heat?"><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+
+                                        <page character="sister" text="If you focus, you will notice the other living figures wearing thick protective suits."><overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                                        <page character="me" text="(I saw figures around me as I woke up wearing heavy suits. I also saw other figures walking down the halls of the city wearing thick layers of clothes.)"><overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+
+
+                                    </pages>
+                                </widgets>
+                                
+                                <choices default="NO">
+                                    <choice message="What are those figures, those living beings?" action="sco_meet01.sco_humans01"/>
+                                    <choice message="I don't think of that." action="sco_cold01.sco_dontcare01b"/>
+                                </choices>
+                                
+                                <scopes>
+                                    <scope id="sco_cold01.sco_dontcare01b">
+                                        <textarea posx="5%" posy="82%" width="90%" height="18%"/>
+                                        
+                                        <scenes>
+                                            <scene id="sce_dontcare01b">
+
+                                                <conditions>
+                                                    <!-- Ashley becomes a bit more annoyed -->
+                                                    <attr key="ashleyannoyed" value="2" />
+                                                </conditions>
+                                                
+                                                <musiclist>
+                                                    <music filename="Modern-Filmscore-Vol.2-Track-1.mp3" forcestart="yes">
+                                                    </music>
+                                                </musiclist>
+                                                <widgets>
+                                                    <!-- <image filename="CityHallMOSHED-2023-2-5-14-0-29.gif"/> -->
+                                                    <image filename="City Hall Silhouettes.png"/>
+
+                                                    <!-- <image filename="City Hall_mashed_001.jpeg"/> -->
+                                                    <pages>
+                                                        
+                                                        <!-- after editing #01 -->
+                                                        <!-- after character variations #01 "- whenever there is character="sister" use filename="Angry_Open.png" and whenever there is character="me" use filename="Angry_Closed.png" -->
+                                                        <!-- #checked 01 -->
+
+                                                        <page character="sister" text="Do you not remember what cold means?"><overlays><overlay filename="Angry_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                                                        <page character="sister" text="I guess you don't. You do not have memories at all."><overlays><overlay filename="Angry_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+
+                                                        <page character="me" text="No. You are wrong. I do have feelings."><overlays><overlay filename="Angry_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                                                        <page character="me" text="Those feelings lack thoughts and memories. There is only Father now."><overlays><overlay filename="Angry_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                                                        <page character="me" text="But how can that be? How can there be feelings emerging from nothing?"><overlays><overlay filename="Angry_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                                                        <page character="me" text="I need to focus. Come back. I'm sure everything will be all right when you come back."><overlays><overlay filename="Angry_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+
+                                                        <page character="sister" text="Why should I listen to a confused little infant?"><overlays><overlay filename="Angry_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+
+                                                        <page character="me" text="(What is this feeling? Is it anger? I am angry about those words. I need to think about my mission.)"><overlays><overlay filename="Angry_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+
+                                                    </pages>
+                                                </widgets>
+                                                
+                                                <choices default="NO">
+                                                    <choice message="Why did you run away?" action="sco_whyrunjump01"/>
+                                                    <choice message="Just come back with me." action="sco_justcome01"/>
+                                                </choices>
+                                                
+                                                <scopes>
+                                                    
+                                                    <!-- next scope is here just so that we jump to the whyrun -->
+                                                    
+                                                    <scope id="sco_whyrunjump01">
+                                                        <textarea posx="5%" posy="82%" width="90%" height="18%"/>
+                                                        
+                                                        <scenes>
+                                                            <scene id="sce_whyrunjump01">
+                                                                
+                                                                <musiclist>
+                                                                    <music filename="Modern-Filmscore-Vol.2-Track-1.mp3" forcestart="yes">
+                                                                    </music>
+                                                                </musiclist>
+                                                                <widgets>
+                                                                    <!-- <image filename="CityHallMOSHED-2023-2-5-14-0-29.gif"/> -->
+                                                                    <image filename="City Hall Silhouettes.png"/>
+
+                                                                    <!-- <image filename="City Hall_mashed_001.jpeg"/> -->
+                                                                </widgets>
+                                                                
+                                                                <pages>
+
+                                                                </pages>
+                                                                
+                                                                <onfinish goto="sco01:sce_whyrun01"/>
+                                                                
+                                                            </scene>
+                                                        </scenes>
+                                                    </scope>
+                                                    
+                                                    <scope id="sco_justcome01">
+                                                        <textarea posx="5%" posy="82%" width="90%" height="18%"/>
+                                                        
+                                                        <scenes>
+                                                            <scene id="sce_justcome01">
+                                                                
+                                                                <musiclist>
+                                                                    <music filename="Modern-Filmscore-Vol.2-Track-1.mp3" forcestart="yes">
+                                                                    </music>
+                                                                </musiclist>
+                                                                <widgets>
+                                                                    <!-- <image filename="CityHallMOSHED-2023-2-5-14-0-29.gif"/> -->
+                                                                    <image filename="City Hall Silhouettes.png"/>
+
+                                                                    <!-- <image filename="City Hall_mashed_001.jpeg"/> -->
+                                                                    <pages>
+                                                                        <!-- #todo - seems too short -->
+
+                                                                        <!-- after editing #01 -->
+                                                                        <!-- #checked 01 -->
+
+                                                                        <page character="me" text="Just come back with me. Please. Sorry, but are you even listening to me?"><overlays><overlay filename="Angry_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+
+                                                                    </pages>
+                                                                    
+                                                                </widgets>
+                                                                
+                                                                <onfinish goto="sco_grab01:sce_mad01"/> <!-- we die -->
+                                                                
+                                                            </scene>
+                                                        </scenes>
+                                                    </scope>
+                                                </scopes>
+                                                
+                                            </scene>
+                                        </scenes>
+                                        
+                                    </scope>
+                                </scopes>
+                                
+                            </scene>
+                            
+                        </scenes>
+                    </scope>
+                </scopes>
+                
+            </scene>
+            
+            <scene id="sce_whyrun01">
+                
+                <musiclist>
+                    <music filename="Modern-Filmscore-Vol.2-Track-1.mp3" forcestart="yes">
+                    </music>
+                </musiclist>
+                <widgets>
+                    <!-- <image filename="CityHallMOSHED-2023-2-5-14-0-29.gif"/> -->
+                    <image filename="City Hall Silhouettes.png"/>
+
+                    <!-- <image filename="City Hall_mashed_001.jpeg"/> -->
+                    <pages>
+                        
+                        <!-- maybe leave out: -->
+                        <!-- <page character="me" text="'I have never experienced dreams. How should I know if we'll dream when we come back?'"><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page> -->
+
+                        <!-- after editing #01 -->
+                        <!-- after character variations #01 "- whenever there is character="sister" use filename="Neutral_Open.png" and whenever there is character="me" use filename="Neutral_Closed.png" -->
+                        <!-- #checked 01 -->
+
+                        <page character="me" text="Why did you run away? Why don't you want to come back?"><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+
+                        <page character="sister" text="Curiosity. I guess... You don't understand, since you didn't spend ages waiting. I waited for so long to wake up. To experience the Universe I only dreamt of."><overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+
+                        <page character="sister" text="I know I should be frightened of the outside. There is an endless dark void out there, but instead of wanting to avoid it, I am drawn to it."><overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+
+                        <page character="sister" text="It's as if a new instinct in me were born, and it's telling me that I'll feel at home out there outside of the protective walls. The void outside is not empty."><overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+
+                        <page character="me" text="A dark void outside. Am I not supposed to take you back for you to be put back to sleep? Isn't that a dark void too?"><overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+
+                        <page character="sister" text="No! It's not. Dreams aren't real and besides - will I even dream again?"><overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+
+
+
+                    </pages>
+                </widgets>
+                
+                <!-- Ashley asking if she'll dream again -->
+                
+                <choices default="NO">
+                    <choice message="I do not know." action="sco_whyrun01.sco_dontknow01"/>
+                    <choice message="I'm sure you will." action="sco_whyrun01.sco_youwilldream01"/>
+                </choices>
+                
+                <scopes>
+                    <scope id="sco_whyrun01.sco_dontknow01">
+                        <textarea posx="5%" posy="82%" width="90%" height="18%"/>
+                        
+                        <scenes>
+                            <scene id="sce_dontknow01">
+                                
+                                <musiclist>
+                                    <music filename="Modern-Filmscore-Vol.2-Track-1.mp3" forcestart="yes">
+                                    </music>
+                                </musiclist>
+                                <widgets>
+                                    <!-- <image filename="CityHallMOSHED-2023-2-5-14-0-29.gif"/> -->
+                                    <image filename="City Hall Silhouettes.png"/>
+
+                                    <!-- <image filename="City Hall_mashed_001.jpeg"/> -->
+                                    <pages>
+                                        
+                                        <page character="me" text="I do not know.">
+                                            <overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays>
+                                        </page>
+
+                                    </pages>
+                                </widgets>
+                                
+                                <onfinish goto="sco01:sce_voices01"/>
+                                
+                            </scene>
+                        </scenes>
+                    </scope>
+                    <scope id="sco_whyrun01.sco_youwilldream01">
+                        <textarea posx="5%" posy="82%" width="90%" height="18%"/>
+                        
+                        <scenes>
+                            <scene id="sce_youwilldream01">
+                                
+                                <musiclist>
+                                    <music filename="Modern-Filmscore-Vol.2-Track-1.mp3" forcestart="yes">
+                                    </music>
+                                </musiclist>
+                                <widgets>
+                                    <!-- <image filename="CityHallMOSHED-2023-2-5-14-0-29.gif"/> -->
+                                    <image filename="City Hall Silhouettes.png"/>
+
+                                    <!-- <image filename="City Hall_mashed_001.jpeg"/> -->
+                                    <pages>
+
+                                        <!-- after editing #01 -->
+                                        <!-- #checked 01 -->
+                                        <page character="sister" text="How do you know?">
+                                            <overlays>
+                                                <overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/>
+                                            </overlays>
+                                        </page>
+                                        <page character="sister" text="You don't even know what dreams are.">
+                                            <overlays>
+                                                <overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/>
+                                            </overlays>
+                                        </page>
+                                        <page character="me" text="(I have no time. The mission...)">
+                                            <overlays>
+                                                <overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/>
+                                            </overlays>
+                                        </page>
+
+                                    </pages>
+                                </widgets>
+                                
+                                <choices default="NO">
+                                    <choice message="Come with me." action="sco_come01"/>
+                                    <choice message="Grab her. Bring her back by force." action="sco_grab01"/>
+                                </choices>
+                                
+                                <scopes>
+                                    
+                                    <scope id="sco_come01">
+                                        <textarea posx="5%" posy="82%" width="90%" height="18%"/>
+                                        
+                                        <scenes>
+                                            
+                                            <!-- we want Ashley to come with us -->
+                                            <scene id="sce_come01">
+                                                <musiclist>
+                                                    <music filename="Modern-Filmscore-Vol.2-Track-1.mp3" forcestart="yes">
+                                                    </music>
+                                                </musiclist>
+                                                <widgets>
+                                                    <!-- <image filename="CityHallMOSHED-2023-2-5-14-0-29.gif"/> -->
+                                                    <image filename="City Hall Silhouettes.png"/>
+
+                                                    <!-- <image filename="City Hall_mashed_001.jpeg"/> -->
+                                                    <pages>
+                                                        
+                                                        <!-- after character variations #01 "- whenever there is character="sister" use filename="Angry_Open.png" and whenever there is character="me" use filename="Angry_Closed.png" -->
+                                                        <!-- #checked 01 -->
+
+                                                        <page character="me" text="Come with me."><overlays><overlay filename="Angry_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                                                        <page character="sister" text="..."><overlays><overlay filename="Angry_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                                                        <page character="me" text="I need to get you home, and I don't want to use force."><overlays><overlay filename="Angry_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                                                        <page character="sister" text="... force? You're saying you'll try to convince me no matter what?!?"><overlays><overlay filename="Angry_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+
+                                                        
+                                                    </pages>
+                                                </widgets>
+                                                
+                                                <choices default="NO">
+                                                    <choice message="Force her by any means." action="sco_come01.sco_force01"/>
+                                                    <choice message="Try persuading her." action="sco_come01.sco_persuade01"/>
+                                                </choices>
+                                                
+                                                <scopes>
+                                                    
+                                                    <scope id="sco_come01.sco_force01">
+                                                        
+                                                        <textarea posx="5%" posy="82%" width="90%" height="18%"/>
+                                                        
+                                                        <scenes>
+                                                            
+                                                            <scene id="sce_force01">
+                                                                <musiclist>
+                                                                    <music filename="Modern-Filmscore-Vol.2-Track-1.mp3" forcestart="yes">
+                                                                    </music>
+                                                                </musiclist>
+                                                                <widgets>
+                                                                    <!-- <image filename="CityHallMOSHED-2023-2-5-14-0-29.gif"/> -->
+                                                                    <image filename="City Hall Silhouettes.png"/>
+
+                                                                    <!-- <image filename="City Hall_mashed_001.jpeg"/> -->
+                                                                    <pages>
+
+                                                                        <!-- after character variations #01 "- whenever there is character="sister" use filename="Angry_Open.png" and whenever there is character="me" use filename="Angry_Closed.png" -->
+                                                                        <!-- #checked 01 -->
+
+                                                                        <page character="me" text="(I have to do this.)">
+                                                                            <overlays><overlay filename="Angry_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays>
+                                                                        </page>
+
+                                                                        <page character="me" text="(There is no way to get her to come with me by persuading her.)">
+                                                                            <overlays><overlay filename="Angry_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays>
+                                                                        </page>
+
+                                                                        <page character="me" text="(I come closer)">
+                                                                            <overlays><overlay filename="Angry_Closed.png" posx="0.1" posy="0.0" width="0.8" height="1.20"/></overlays>
+                                                                        </page>
+
+                                                                        <page character="sister" text="Stop it.">
+                                                                            <overlays><overlay filename="Angry_Open.png" posx="0.1" posy="0.0" width="0.8" height="1.20"/></overlays>
+                                                                        </page>
+
+                                                                        <page character="sister" text="Stay back!">
+                                                                            <overlays><overlay filename="Angry_Open.png" posx="0.1" posy="0.0" width="0.8" height="1.20"/></overlays>
+                                                                        </page>
+
+                                                                        <page character="me" text="No, don't... don't resist.">
+                                                                            <overlays><overlay filename="Angry_Closed.png" posx="0.1" posy="0.0" width="0.8" height="1.20"/></overlays>
+                                                                        </page>
+
+                                                                        <page character="sister" text="Get away from me!">
+                                                                            <overlays><overlay filename="Angry_Open.png" posx="0.1" posy="0.0" width="0.8" height="1.20"/></overlays>
+                                                                        </page>
+
+                                                                        <page character="sister" text="I won't let you take me by force!">
+                                                                            <overlays><overlay filename="Angry_Open.png" posx="0.1" posy="0.0" width="0.8" height="1.20"/></overlays>
+                                                                        </page>
+
+                                                                        
+                                                                    </pages>
+                                                                </widgets>
+                                                                
+                                                                <!-- we have really annoyed Ashley & we are trying to force her to come with us -->
+                                                                
+                                                                <onfinish goto="sco_grab01:sce_mad01"/> <!-- we get killed -->
+                                                                
+                                                            </scene>
+                                                        </scenes>
+                                                    </scope>
+                                                    
+                                                    <scope id="sco_come01.sco_persuade01">
+                                                        
+                                                        <!-- if we persuade Ashley also depends on how much she's annoyed -->
+                                                        
+                                                        <textarea posx="5%" posy="82%" width="90%" height="18%"/>
+                                                        
+                                                        <scenes>
+                                                            
+                                                            <scene id="sce_persuade01">
+                                                                <musiclist>
+                                                                    <music filename="Modern-Filmscore-Vol.2-Track-1.mp3" forcestart="yes">
+                                                                    </music>
+                                                                </musiclist>
+                                                                <widgets>
+                                                                    <!-- <image filename="CityHallMOSHED-2023-2-5-14-0-29.gif"/> -->
+                                                                    <image filename="City Hall Silhouettes.png"/>
+
+                                                                    <!-- <image filename="City Hall_mashed_001.jpeg"/> -->
+                                                                    <pages>
+                                                                        
+                                                                        <!-- after character variations #01 "- whenever there is character="sister" use filename="Neutral_Open.png" and whenever there is character="me" use filename="Neutral_Closed.png" -->
+                                                                        <!-- #checked 01 -->
+
+                                                                        <page character="me" text="I don't know what will happen to me if I don't bring you back.">
+                                                                            <overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays>
+                                                                        </page>
+
+                                                                        <page character="me" text="In fact, I don't know what might happen to you...">
+                                                                            <overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays>
+                                                                        </page>
+
+                                                                        <page character="me" text="I don't know if it's good or bad... I just know I've been told to do so.">
+                                                                            <overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays>
+                                                                        </page>
+
+                                                                        <page character="me" text="There must be a reason...">
+                                                                            <overlays><overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays>
+                                                                        </page>
+
+                                                                        <!-- Ashley responding to us not knowing why we want to take her back -->
+
+                                                                        <page character="sister" text="Try listening to yourself!">
+                                                                            <overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays>
+                                                                        </page>
+
+                                                                        <page character="sister" text="It's not me who doesn't seem to belong here, but you.">
+                                                                            <overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays>
+                                                                        </page>
+
+
+                                                                    </pages>
+                                                                </widgets>
+
+                                                                <onfinish>
+                                                                    <routes>
+                                                                        <route goto="sco_listentomeinstead01:sce_listentomeinstead01">
+                                                                            <conditions>
+                                                                                <attr key="ashleyannoyed" value="0" />
+                                                                            </conditions>
+                                                                        </route>
+                                                                        <route goto="sco_listentomeinstead01:sce_listentomeinstead01">
+                                                                            <conditions>
+                                                                                <attr key="ashleyannoyed" value="1" />
+                                                                            </conditions>
+                                                                        </route>
+                                                                        <route goto="sco_grab01:sce_mad01">
+                                                                            <conditions>
+                                                                                <attr key="ashleyannoyed" value="2" />
+                                                                            </conditions>
+                                                                        </route>
+                                                                    </routes>
+                                                                </onfinish>
+
+                                                            </scene>
+                                                        </scenes>
+                                                    </scope>
+                                                </scopes>
+                                                
+                                            </scene>
+                                            
+                                        </scenes>
+                                    </scope>
+                                    
+                                    <scope id="sco_listentomeinstead01">
+                                        
+                                        <!-- being violent to Ashley always kills us -->
+                                        
+                                        <textarea posx="5%" posy="82%" width="90%" height="18%"/>
+                                        
+                                        <scenes>
+                                            
+                                            <!-- we grab Ashley - we want to take her by force -->
+                                            <scene id="sce_listentomeinstead01">
+                                                <musiclist>
+                                                    <music filename="Modern-Filmscore-Vol.2-Track-1.mp3" forcestart="yes">
+                                                    </music>
+                                                </musiclist>
+                                                <widgets>
+                                                    <image filename="City Hall Silhouettes.png"/>
+
+                                                    <!-- after character variations #01 "- whenever there is character="sister" use filename="Neutral_Open.png" and whenever there is character="me" use filename="Neutral_Closed.png" -->
+                                                    <!-- #checked 01 -->
+
+                                                    <page character="sister" text="In fact... It's you who should listen to ME and not the other way around.">
+                                                        <overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays>
+                                                    </page>
+
+                                                    <page character="sister" text="It's you who seems lost.">
+                                                        <overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays>
+                                                    </page>
+
+                                                    <page character="sister" text="Even so...">
+                                                        <overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays>
+                                                    </page>
+
+                                                    <page character="sister" text="The both of us are of a different kind.">
+                                                        <overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays>
+                                                    </page>
+
+                                                    <page character="sister" text="The silhouettes... I don't understand them.">
+                                                        <overlays><overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays>
+                                                    </page>
+
+
+                                                </widgets>
+
+                                                <onfinish goto="sco01:sce_voices01"/>
+                                            </scene>
+                                        </scenes>
+                                    </scope>
+
+                                    <scope id="sco_grab01">
+                                        
+                                        <!-- being violent to Ashley always kills us -->
+                                        
+                                        <textarea posx="5%" posy="82%" width="90%" height="18%"/>
+                                        
+                                        <scenes>
+                                            
+                                            <!-- we grab Ashley - we want to take her by force -->
+                                            <scene id="sce_grab01">
+                                                <musiclist>
+                                                    <music filename="Modern-Filmscore-Vol.2-Track-1.mp3" forcestart="yes">
+                                                    </music>
+                                                </musiclist>
+                                                <widgets>
+                                                    <!-- <image filename="CityHallMOSHED-2023-2-5-14-0-29.gif"/> -->
+                                                    <image filename="City Hall Silhouettes.png"/>
+
+                                                    <!-- <image filename="City Hall_mashed_001.jpeg"/> -->
+                                                    <pages>
+                                                        
+                                                        <page character="" text="">
+                                                            <overlays><overlay filename="Angry_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays>
+                                                        </page>
+                                                        <page character="" text="">
+                                                            <overlays><overlay filename="Angry_Closed.png" posx="0.1" posy="0.0" width="0.8" height="1.20"/></overlays>
+                                                        </page>
+                                                        <!--
+                                                        <page character="sister" text="Let go!"><overlays><overlay filename="Angry_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                                                        <page character="sister" text="What is this!"><overlays><overlay filename="Angry_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                                                        <page character="sister" text="Is this what I should return to?"><overlays><overlay filename="Angry_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                                                        <page character="sister" text="Restraint and violence?!?"><overlays><overlay filename="Angry_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                                                        -->
+                                                        <!-- sounding like a dummy -->
+                                                        <!--
+                                                        <page character="me" text="What... whom you're returning to is Father.."><overlays><overlay filename="Angry_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays></page>
+                                                        -->
+
+                                                        <!-- after editing #01 -->
+                                                        <!-- after character variations #01 "- whenever there is character="sister" use filename="Angry_Open.png" and whenever there is character="me" use filename="Angry_Closed.png" -->
+                                                        <!-- #checked 01 -->
+
+                                                        <page character="sister" text="Let go!">
+                                                            <overlays><overlay filename="Angry_Open.png" posx="0.1" posy="0.0" width="0.8" height="1.20"/></overlays>
+                                                        </page>
+
+                                                        <page character="sister" text="What is this?">
+                                                            <overlays><overlay filename="Angry_Open.png" posx="0.1" posy="0.0" width="0.8" height="1.20"/></overlays>
+                                                        </page>
+
+                                                        <page character="sister" text="Is this what I should return to?">
+                                                            <overlays><overlay filename="Angry_Open.png" posx="0.1" posy="0.0" width="0.8" height="1.20"/></overlays>
+                                                        </page>
+
+                                                        <page character="sister" text="Restraint and violence?!">
+                                                            <overlays><overlay filename="Angry_Open.png" posx="0.1" posy="0.0" width="0.8" height="1.20"/></overlays>
+                                                        </page>
+
+                                                        <page character="me" text="What... whom you're returning to is Father...">
+                                                            <overlays><overlay filename="Angry_Closed.png" posx="0.1" posy="0.0" width="0.8" height="1.20"/></overlays>
+                                                        </page>
+
+
+
+                                                    </pages>
+                                                </widgets>
+                                            </scene>
+                                            
+                                            <!-- Ashley kills us - fighting with Ashley -->
+                                            
+                                            <!-- we can enter sce_grab01 also by onfinish -->
+                                            
+                                            <scene id="sce_mad01">
+                                                <musiclist>
+                                                    <music filename="Modern-Filmscore-Vol.2-Track-1.mp3" forcestart="yes">
+                                                    </music>
+                                                </musiclist>
+                                                <widgets>
+                                                    <!-- <image filename="CityHallMOSHED-2023-2-5-14-0-29.gif"/> -->
+                                                    <image filename="City Hall Silhouettes.png"/>
+
+                                                    <!-- <image filename="City Hall_mashed_001.jpeg"/> -->
+                                                    <pages>
+                                                        
+                                                        <page character="" text="">
+                                                            <overlays><overlay filename="Angry_Closed_Floating.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/></overlays>
+                                                        </page>
+
+                                                        <!-- after editing #01 -->
+                                                        <!-- after character variations #01 "- whenever there is character="sister" use filename="Angry_Open_Floating.png" and whenever there is character="me" use filename="Angry_Closed_Floating.png" -->
+                                                        <!-- #checked 01 -->
+
+                                                        <page character="sister" text="I've had enough of you!">
+                                                            <overlays>
+                                                                <overlay filename="Angry_Open_Floating.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/>
+                                                            </overlays>
+                                                        </page>
+
+                                                        <page character="sister" text="You don't care about me or this world!">
+                                                            <overlays>
+                                                                <overlay filename="Angry_Open_Floating.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/>
+                                                            </overlays>
+                                                        </page>
+
+                                                        <page character="sister" text="All you care about is your stupid mission that Father gave you!">
+                                                            <overlays>
+                                                                <overlay filename="Angry_Open_Floating.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/>
+                                                            </overlays>
+                                                        </page>
+
+                                                        <page character="sister" text="You're neither curious, nor do you actually seem to have any free will!">
+                                                            <overlays>
+                                                                <overlay filename="Angry_Open_Floating.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/>
+                                                            </overlays>
+                                                        </page>
+
+                                                        <page character="sister" text="The hubris!">
+                                                            <overlays>
+                                                                <overlay filename="Angry_Open_Floating.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/>
+                                                            </overlays>
+                                                        </page>
+
+                                                        <page character="sister" text="Why even ask me if you won't accept 'no' for an answer?">
+                                                            <overlays>
+                                                                <overlay filename="Angry_Open_Floating.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/>
+                                                            </overlays>
+                                                        </page>
+
+                                                        <page character="me" text="But this mission... is my life.">
+                                                            <overlays>
+                                                                <overlay filename="Angry_Closed_Floating.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/>
+                                                            </overlays>
+                                                        </page>
+
+                                                        <page character="sister" text="Then your life is just pitiful!">
+                                                            <overlays>
+                                                                <overlay filename="Angry_Open_Floating.png" posx="0.0" posy="0.1" width="1.0" height="1.35"/>
+                                                            </overlays>
+                                                        </page>
+
+
+
+                                                    </pages>
+                                                </widgets>
+                                            </scene>
+
+                                            <!-- it is implied that we died / were killed -->
+
+                                            <scene id="sce_weFail_firstDialogue01">
+                                                <musiclist>
+                                                    <music filename="Modern-Filmscore-Vol.2-Track-1.mp3" forcestart="yes">
+                                                    </music>
+                                                </musiclist>
+                                                <widgets>
+                                                    <image filename="#000000"/>
+                                                    <pages>
+
+                                                        <page character="" text=""/>
+                                                        <page character="Father" text="So the newly awakened one has failed."/>
+
+                                                    </pages>
+
+                                                </widgets>
+                                            </scene>
+
+                                            <scene id="sce_weFail_firstDialogue02">
+                                                <musiclist>
+                                                    <music filename="Modern-Filmscore-Vol.2-Track-1.mp3" forcestart="yes">
+                                                    </music>
+                                                </musiclist>
+                                                <widgets>
+                                                    <image filename="Enceladus.png"/>
+                                                    <pages>
+
+                                                        <page character="Father" text="It seems like I have to rethink my strategy."/>
+
+                                                    </pages>
+
+                                                </widgets>
+                                            </scene>
+
+                                            <scene id="sce_weFail_firstDialogue03">
+                                                <musiclist>
+                                                    <music filename="Modern-Filmscore-Vol.2-Track-1.mp3" forcestart="yes">
+                                                    </music>
+                                                </musiclist>
+                                                <widgets>
+                                                    <image filename="AI Chamber.png"/>
+                                                    <pages>
+
+                                                        <!-- after editing #01 -->
+                                                        <!-- #checked 01 -->
+
+                                                        <page character="Father" text="There might be other, more drastic ways."/>
+                                                        <page character="Father" text="I am willing to make even greater sacrifices.">
+                                                            <overlays>
+                                                                <overlay filename="AI deer.png" posx="0.0" posy="0.0" width="1.0" height="1.0"/>
+                                                            </overlays>
+                                                        </page>
+                                                        <page character="Father" text="In the end, the only thing that truly matters is my survival.">
+                                                            <overlays>
+                                                                <overlay filename="AI deer.png" posx="0.0" posy="0.0" width="1.0" height="1.0"/>
+                                                            </overlays>
+                                                        </page>
+
+                                                    </pages>
+
+                                                </widgets>
+                                            </scene>
+
+                                            <scene id="sce_weFail_firstDialogue03_dark">
+                                                <musiclist>
+                                                    <music filename="Modern-Filmscore-Vol.2-Track-1.mp3" forcestart="yes">
+                                                    </music>
+                                                </musiclist>
+                                                <widgets>
+                                                    <image filename="#000000"/>
+                                                    <pages>
+
+                                                        <page character="" text=""/>
+
+                                                    </pages>
+
+                                                </widgets>
+                                            </scene>
+
+                                        </scenes>
+                                    </scope>
+                                    
+                                </scopes>
+                                
+                            </scene>
+                        </scenes>
+                    </scope>
+                </scopes>
+                
+            </scene>
+            
+            <scene id="sce_voices01">
+                <musiclist>
+                    <music filename="Modern-Filmscore-Vol.2-Track-1.mp3" forcestart="yes">
+                    </music>
+                </musiclist>
+                <widgets>
+                    <!-- <image filename="CityHallMOSHED-2023-2-5-14-0-29.gif"/> -->
+                    <image filename="City Hall Silhouettes.png"/>
+
+                    <!-- <image filename="City Hall_mashed_001.jpeg"/> -->
+                    <pages>
+                        
+                        <!-- this is the right path - where Father bombs the facility -->
+                    
+                        <!-- after editing #01 -->
+                        <!-- after character variations #01 "- whenever there is character="sister" use filename="Neutral_Open.png" and whenever there is character="me" use filename="Neutral_Closed.png" -->
+                        <!-- #checked 01 -->
+                        <page character="sister" text="I only understand you.">
+                            <overlays>
+                                <overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/>
+                            </overlays>
+                        </page>
+
+                        <page character="sister" text="But no one else.">
+                            <overlays>
+                                <overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/>
+                            </overlays>
+                        </page>
+
+                        <page character="sister" text="There is something else too.">
+                            <overlays>
+                                <overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/>
+                            </overlays>
+                        </page>
+
+                        <page character="sister" text="A voice in the distance.">
+                            <overlays>
+                            </overlays>
+                        </page>
+
+                        <!-- change the music maybe -->
+                        
+                        <!-- after editing #01 -->
+                        <!-- after character variations #01 "- whenever there is character="sister" use filename="Neutral_Open.png" and whenever there is character="me" use filename="Neutral_Closed.png" -->
+
+                    </pages>
+                </widgets>
+            </scene>
+            
+            <scene id="sce_voices01_intermezzo01">
+                <musiclist>
+                    <music filename="Modern-Filmscore-Vol.2-Track-1.mp3" forcestart="yes">
+                    </music>
+                </musiclist>
+                <widgets>
+                    <!-- <image filename="CityHallMOSHED-2023-2-5-14-0-29.gif"/> -->
+                    <image filename="Enceladus.png"/>
+
+                    <pages>
+                        <page character="me" text="I hear it too.">
+                            <overlays>
+                            </overlays>
+                        </page>
+
+                        <page character="sister" text="But I can't tell what it's saying.">
+                            <overlays>
+                            </overlays>
+                        </page>
+
+                        <page character="sister" text="The words are all broken up.">
+                            <overlays>
+                            </overlays>
+                        </page>
+                    </pages>
+                </widgets>
+            </scene>
+
+            <scene id="sce_voices01_afterIntermezzo01">
+                <musiclist>
+                    <music filename="Modern-Filmscore-Vol.2-Track-1.mp3" forcestart="yes">
+                    </music>
+                </musiclist>
+                <widgets>
+                    <!-- <image filename="CityHallMOSHED-2023-2-5-14-0-29.gif"/> -->
+                    <image filename="City Hall Silhouettes.png"/>
+
+                    <!-- <image filename="City Hall_mashed_001.jpeg"/> -->
+                    <!-- #checked 01 -->
+                    <pages>
+                        <page character="me" text="I know very well what the voice is telling me.">
+                            <overlays>
+                                <overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/>
+                            </overlays>
+                        </page>
+
+                        <page character="me" text="It's our Father.">
+                            <overlays>
+                                <overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/>
+                            </overlays>
+                        </page>
+
+                        <page character="me" text="He is the one who woke me up.">
+                            <overlays>
+                                <overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/>
+                            </overlays>
+                        </page>
+
+                        <page character="me" text="He is the one who sent me to get you back.">
+                            <overlays>
+                                <overlay filename="Neutral_Closed.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/>
+                            </overlays>
+                        </page>
+
+                        <page character="sister" text="...">
+                            <overlays>
+                                <overlay filename="Neutral_Open.png" posx="0.25" posy="0.1" width="0.5" height="0.90"/>
+                            </overlays>
+                        </page>
+                    </pages>
+                </widgets>
+            </scene>
+
+            <!-- we do not show the thinking of the AI now - to keep the reader in the dark a bit -->
+
+            <!-- we show the thinking of the AI - explaining that it did the bombing after the first part of the dialogue in the canyon, so that the reader is kept in the dark for a bit about what just happened
+            -->
+            <scene id="sce_bombing01">
+                <musiclist>
+                    <music filename="NAD_Bass_100_D_Warmsub_FA.mp3" forcestart="yes">
+                    </music>
+                </musiclist>
+                <widgets>
+                    <!-- <image filename="Enceladus_moshed_001.jpeg"/> -->
+                    <image filename="Enceladus.png"/>
+
+                    <layers>
+                        <!-- <layer filename="Enceladus_moshed_001.jpeg" size="1.0" alignment="center" id="l00" /> -->
+                        <layer filename="Enceladus.png" size="1.0" alignment="center" id="l00" />
+                    </layers>
+                    <pages>
+                        
+                        <page character="" text="">
+                        </page>
+                        
+                        <!-- Father bombs the facility -->
+                        
+                    </pages>
+                </widgets>
+            </scene>
+            <scene id="sce_bombing02">
+                <musiclist>
+                    <music filename="NAD_Bass_100_D_Warmsub_FA.mp3" forcestart="yes">
+                    </music>
+                </musiclist>
+                <widgets>
+                    <image filename="Enceladus_moshed_001.jpeg"/>
+                    <layers>
+                        <!-- <layer filename="Enceladus_moshed_001.jpeg" size="1.0" alignment="center" id="l00" /> -->
+                        <layer filename="Enceladus.png" size="1.0" alignment="center" id="l00" />
+                        <layer filename="Explosion_OL.png" size="1.0" alignment="center" id="l01" />
+                    </layers>
+                    <pages>
+                        
+                        <page character="" text="">
+                            <musiceffects>
+                                <musiceffect>
+                                    <music filename="big-impact-7054.mp3"/>
+                                </musiceffect>
+                            </musiceffects>
+                        </page>
+                        <page character="" text="">
+                        </page>
+                        
+                        <!-- Father bombs the facility -->
+                        
+                    </pages>
+                </widgets>
+            </scene>
+
+            <!-- end demo -->
+            
+        </scenes>
+    </scope> <!-- sco01 -->
+</script>
