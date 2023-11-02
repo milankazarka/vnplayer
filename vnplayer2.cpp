@@ -1258,6 +1258,7 @@ void onMenuWindow( int x, int y ) {
         printf("loadButton tapped\n");
         if (selectedSlot>-1) {
             menu = false;
+            bcontinue = true;
             onLoad();
         }
     } else if (didTapButton(&playButton,x,y)) {
