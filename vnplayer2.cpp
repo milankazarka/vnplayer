@@ -1467,7 +1467,7 @@ int main(int argc, char* argv[]) {
     gameendButton.fgColor = 255;
     gameendButton.hidden = false;
 
-    loadScript("script_tears01-vnp.xml");
+    loadScript("script.xml");
     CScene *scene = script->rewind();
     scene->rewind();
 

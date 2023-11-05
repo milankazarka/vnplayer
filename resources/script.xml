@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <script storycode="tears01" version="1">
     <meta>
-        <title>Tears of Enceladus</title>
+        <title>Tears of Enceladus Demo</title>
         <author>Milan Kazarka</author>
         <revision>1.0</revision>
         <revision_date>2023-01-01 5:05:29+0200</revision_date>
@@ -10,10 +10,6 @@
         <website>http://www.vysoko.com/</website>
         <copyright>© 2023 Milan Kazarka</copyright>
 
-        <!-- menu settings -->
-        <menu-background>menuBackground04.png</menu-background>
-        <menu-label-style>background: none; border: none; color: black;</menu-label-style>
-        <menu-button-style>background: #A0404040; border: 1px #A0404040; color: white; min-height: 40px; border-radius: 8px;</menu-button-style>
     </meta>
 
     <scope id="sco01">
@@ -25,10 +21,6 @@
                 <conditions>
                     <!-- we initialize  the variables -->
                     <attr key="ashleyannoyed" value="0" />
-                    <attr key="ashleyannoyedinvalley" value="0" />
-                    <attr key="pyramidquestionswhatarewe" value="0" /> <!-- this is the question loop in the pyramid - we can chose to ask all questions or skip -->
-                    <attr key="pyramidquestionswhatisFather" value="0" />
-                    <attr key="fightearth" value="0" />
                 </conditions>
                 
                 <textarea posx="20%" posy="40%" width="50%" height="40%"/>
@@ -44,21 +36,6 @@
                     </pages>
                 </widgets>
             </scene>
-            
-            <!--
-                # note: this will be a deeply atmospheric VN
-
-                - Ashley's first monologue -
-                - at the beginning -
-
-                Is this still a dream?
-                I feel reality slowly oozing into my consciousness.
-                But my dream isn't yet gone.
-                I remember believing everything I dreamnt to be true, but now I'm not so sure.
-
-                # todo - elaborate more
-                This reality - this World seems different to the one I dreamt of.
-            -->
 
             <scene id="sce01">
                 <musiclist>
@@ -1475,6 +1452,8 @@
                                     <music filename="big-impact-7054.mp3"/>
                                 </musiceffect>
                             </musiceffects>
+                        </page>
+                        <page character="" text="">
                         </page>
                         <page character="" text="">
                         </page>
