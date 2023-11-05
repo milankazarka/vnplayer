@@ -67,8 +67,7 @@
             
             <scene id="sce02">
                 <musiclist>
-                    <music filename="GA_100_Dm_DarkShadow_FRK.mp3" forcestart="yes">
-                    </music>
+                    <music filename="GA_100_Dm_DarkShadow_FRK.mp3" forcestart="yes" />
                 </musiclist>
                 <widgets>
                     <!-- <image filename="Enceladus_moshed_001_animated.gif"/> -->
