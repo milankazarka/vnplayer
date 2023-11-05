@@ -12,18 +12,15 @@ SDL2, SDL2_image, SDL2_mixer, and SDL2_ttf
 ./build.sh
 
 
-2.) use CMake for a more guided process:
+2.) use the Automake system for a more guided process:
 
+autoreconf --install
 
-mkdir ./build
-
-cd build
-
-cmake ../
+./configure
 
 make
 
-cd ../
+Both should produce a ./vnplayer2 binary which if you run from the same directory should load the demo visual novel script from resources.
 
 # use
 
