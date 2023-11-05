@@ -27,11 +27,11 @@ cd ../
 
 # use
 
-In the visual novel, all interactions, music, backgrounds, overlays (characters), and choices are defined using an XML script. All files, including the script, images, music, and font have to be placed in the ./resources folder. By default, the engine reads the ./resources/script.xml file.
+In the visual novel, all interactions, music, backgrounds, overlays (characters), and choices are defined using an XML script. All files, including the script, images, music, and font have to be placed in the **./resources** folder. By default, the engine reads the **./resources/script.xml** file.
 
 # game script
 
-All the examples can be found in the ./resources/script.xml - this together with the images and music in the ./resources folder is the demo of the visual novel Tears of Enceladus. Feel free to modify it and use it as a starting point for your own visual novel.
+All the examples can be found in the **./resources/script.xml** - this together with the images and music in the **./resources** folder is the demo of the visual novel Tears of Enceladus. Feel free to modify it and use it as a starting point for your own visual novel.
 
 First, we define the meta-information that goes along the visual novel. This resides in <script> which is the entry object to your visual novel.
 
@@ -75,7 +75,7 @@ Here is an example of a simple scene without character overlays per page, but ju
 </scene>
 ```
 
-Here is a more complicated scene at the end of which we have some choices. You can only define choices at the end of a <scene> and each choice jumps to a specific <scope>. In this example we also define <overlays> for every page with relative positioning of the overlay defined by (posx="0.25" posy="0.1" width="0.5" height="0.90").
+Here is a more complicated scene at the end of which we have some choices (<choices default="NO">). You can only define choices at the end of a <scene> and each choice jumps to a specific <scope>. In this example, we also define <overlays> for every page with relative positioning of the overlay defined by (posx="0.25" posy="0.1" width="0.5" height="0.90").
 
 ```xml
 <scene id="sce_meet01_after_Father_interject02_withHumans01">
@@ -104,4 +104,53 @@ Here is a more complicated scene at the end of which we have some choices. You c
             <choice message="I don't care about those other beings." action="sco_meet01.sco_dontcare01"/>
         </choices>
 ```
+
+You can define <scopes> within a <scene> effectively grouping the logic of your game into a decision tree. On the other hand, you can also choose to jump to any <scope> anywhere in the script. In our example, we added a list of <scopes> after the choices - so for example, if we choose ("What are those figures, those living beings?") we jump into the first scene of scope (sco_meet01.sco_humans01).
+
+```xml
+<choices default="NO">
+    <choice message="What are those figures, those living beings?" action="sco_meet01.sco_humans01"/>
+    <choice message="I don't care about those other beings." action="sco_meet01.sco_dontcare01"/>
+</choices>
+                
+<scopes>
+    <scope id="sco_meet01.sco_humans01">
+        <textarea posx="5%" posy="82%" width="90%" height="18%"/>
+        <scenes>
+            <scene id="sce_humans01">
+```
+
+At the end of each scene, we can also define where to jump to based on attributes. Here is an example of a scene we jumped where we set an attribute - this attribute we then use in another scene to decide what scope to jump to.
+
+```xml
+<scope id="sco_meet01.sco_dontcare01">
+    <textarea posx="5%" posy="82%" width="90%" height="18%"/>
+    <scenes>
+        <scene id="sce_dontcare01">
+            <conditions>
+                <attr key="ashleyannoyed" value="1" />
+            </conditions>
+            ...
+```
+
+The attribute that we set in the previous example is used as a condition to jump to (sco_listentomeinstead01:sce_listentomeinstead01). Using **<choices>**, **<conditions>**, attributes and **<onfinish>** are the primary ways we define the game logic. This way we can for example set the 'mood' of a character and end up in a different scene down the line. Using <conditions> is a way to make a change to the flow of your game without defining two whole new paths, but reusing entire scopes and only presenting a different path once we need to.
+
+```xml
+</widgets>
+<onfinish>
+    <routes>
+        <route goto="sco_listentomeinstead01:sce_listentomeinstead01">
+            <conditions>
+                <attr key="ashleyannoyed" value="0" />
+            </conditions>
+        </route>
+        <route goto="sco_listentomeinstead01:sce_listentomeinstead01">
+            <conditions>
+                <attr key="ashleyannoyed" value="1" />
+            </conditions>
+        </route>
+        ...
+```
+
+
 
