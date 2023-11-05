@@ -1,0 +1,15 @@
+
+To build vnplayer you have multiple options:
+
+1.) use build.sh. This assumes that you know which dependencies you have to install:
+SDL2, SDL2_image, SDL2_mixer, and SDL2_ttf
+
+./build.sh
+
+2.) use CMake for a more guided process:
+
+mkdir ./build
+cd build
+cmake ../
+make
+cd ../

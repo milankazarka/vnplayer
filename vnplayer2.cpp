@@ -321,7 +321,11 @@ void renderTextWithColor(const char* text, int x, int y, int color) {
 }
 
 void renderTextWithRGB(const char* text, int x, int y, int r, int g, int b) {
-    SDL_Color colorDef = {r, g, b};
+    SDL_Color colorDef;
+    colorDef.r = static_cast<Uint8>(r); // Ensure r, g, and b are within the range 0-255
+    colorDef.g = static_cast<Uint8>(g);
+    colorDef.b = static_cast<Uint8>(b);
+
     SDL_Surface* textSurface = TTF_RenderText_Blended(font, text, colorDef);
     SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
     SDL_Rect textRect = {x, y, textSurface->w, textSurface->h};
@@ -359,7 +363,13 @@ void renderUIButton(uiButton *buttonDef) {
     SDL_SetRenderDrawColor(renderer, buttonDef->bgColor, buttonDef->bgColor, buttonDef->bgColor, buttonDef->bgAlpha);
     SDL_RenderFillRect(renderer, &buttonDef->rect);
 
-    SDL_Surface* textSurface = TTF_RenderText_Solid(font, (char*)buttonDef->text, (SDL_Color){buttonDef->fgColor, buttonDef->fgColor, buttonDef->fgColor, 255});
+    SDL_Color colorDef;
+    colorDef.r = static_cast<Uint8>(buttonDef->fgColor); // Ensure fgColor is within the range 0-255
+    colorDef.g = static_cast<Uint8>(buttonDef->fgColor);
+    colorDef.b = static_cast<Uint8>(buttonDef->fgColor);
+    colorDef.a = 255; // Set the alpha channel to 255
+    SDL_Surface* textSurface = TTF_RenderText_Solid(font, (char*)buttonDef->text, colorDef);
+
     renderTextWithColor((char*)buttonDef->text,buttonDef->rect.x+((buttonDef->rect.w-textSurface->w)/2),buttonDef->rect.y+((buttonDef->rect.h-textSurface->h)/2),buttonDef->fgColor);
     SDL_FreeSurface(textSurface);
 }
@@ -431,7 +441,6 @@ int onQuestionButton(int index) {
     CScope *scope = script->getScopeAtId(scopeid);
     if (scope) {
         if (scope!=script->mcurrentScope) {
-            //[self loadScope:scope];
             loadScope(scope);
         } else {
             onNextScene();
@@ -941,9 +950,6 @@ int setCurrentPage(CPage *page) {
     setCurrentTextFromPage(page);
     setCurrentOverlaysFromPage(page);
     //playCurrentMusic(page);
-    //[self runCurrentActionsFromPage:page];
-    //[self playCurrentMusicEffectsFromPage:page];
-    //[self playCurrentVideoEffectsFromPage:page];
 
     return 1;
 }
