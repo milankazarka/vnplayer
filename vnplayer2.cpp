@@ -1400,7 +1400,9 @@ int main(int argc, char* argv[]) {
     if (argc > 0) {
         char *path = realpath(argv[0], NULL);
         if (path != NULL) {
-            workingDirectory = dirname(path);
+            char *tmp = dirname(path);
+            workingDirectory = (char*)malloc(strlen(tmp)+1);
+            strcpy(workingDirectory,tmp);
             printf("The directory of the currently running binary is: %s\n", workingDirectory);
             free(path);
         } else {
