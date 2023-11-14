@@ -8,6 +8,16 @@ To build vnplayer you have multiple options:
 1.) use build.sh. This assumes that you know which dependencies you have to install:
 SDL2, SDL2_image, SDL2_mixer, and SDL2_ttf
 
+E.g. on Ubuntu:
+```
+sudo apt install libsdl2-dev libsdl2-2.0-0 -y;
+
+sudo apt install libjpeg-dev libwebp-dev libtiff5-dev libsdl2-image-dev libsdl2-image-2.0-0 -y;
+
+sudo apt install libmikmod-dev libfishsound1-dev libsmpeg-dev liboggz2-dev libflac-dev libfluidsynth-dev libsdl2-mixer-dev libsdl2-mixer-2.0-0 -y;
+
+sudo apt install libfreetype6-dev libsdl2-ttf-dev libsdl2-ttf-2.0-0 -y;
+```
 
 ./build.sh
 
@@ -109,7 +119,7 @@ You can define <scopes> within a <scene> effectively grouping the logic of your 
     <choice message="What are those figures, those living beings?" action="sco_meet01.sco_humans01"/>
     <choice message="I don't care about those other beings." action="sco_meet01.sco_dontcare01"/>
 </choices>
-                
+
 <scopes>
     <scope id="sco_meet01.sco_humans01">
         <textarea posx="5%" posy="82%" width="90%" height="18%"/>
