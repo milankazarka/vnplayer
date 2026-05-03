@@ -21,14 +21,20 @@
 #include <SDL_mixer.h>
 #include <SDL_ttf.h>
 #include "tinyxml.h"
-#include <unistd.h>
-#include <libgen.h>
 #include "engine/CCommon.h"
 #include "engine/CScript.h"
 #include "engine/CCurrentContext.h"
+#include <filesystem>
+#include <iostream>
 
 #define _VERBOSE_RENDER_NO
 #define _VERTICAL_MODE_ENABLED
+
+#ifdef _WIN32
+#define PATH_SEP "\\"
+#else
+#define PATH_SEP "/"
+#endif
 
 SDL_Texture* bgImageTexture = NULL;
 SDL_Texture* testImageTexture = NULL;
@@ -120,16 +126,19 @@ char *constructFilePath(const char* directory, const char* filename, char* buffe
         return NULL;
     }
 
-    if (snprintf(buffer, bufferSize, "%s/resources/%s", directory, filename) < 0) {
-        perror("snprintf");
-        return NULL;
+    std::filesystem::path p = std::filesystem::path(directory) / "resources" / filename;
+    auto s = p.string();
+
+    if (s.size() + 1 > bufferSize) {
+        return nullptr;
     }
 
+    std::snprintf(buffer, bufferSize, "%s", s.c_str());
     return buffer;
 }
 
-int fileExists(const char *path) {
-    return access(path, F_OK) != -1;
+int fileExists(const char* path){
+    return std::filesystem::exists(path) ? 1 : 0;
 }
 
 // read the savefile - in a format:
@@ -350,7 +359,10 @@ void renderChoiceButton(const char* buttonText) {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 128); // Alpha value of 128 (0.5 opacity)
     SDL_RenderFillRect(renderer, &buttonRect);
 
-    SDL_Surface* textSurface = TTF_RenderText_Solid(font, buttonText, (SDL_Color){255, 255, 255, 255});
+    SDL_Color color = { 255, 255, 255, 255 };
+
+    SDL_Surface* textSurface = TTF_RenderText_Solid(font, buttonText, color);
+
     renderText(buttonText,TEXT_OFFSET + (windowWidth-(TEXT_OFFSET*2) - textSurface->w) / 2,y + (BUTTON_HEIGHT - textSurface->h) / 2);
     numChoicesDisplayed++;
     SDL_FreeSurface(textSurface);
@@ -718,8 +730,8 @@ void redraw() {
                 size_t firstPartLength = newlinePos - token;
 
                 // Create two new strings to hold the parts
-                char firstPart[firstPartLength + 1]; // +1 for the null-terminator
-                char secondPart[strlen(newlinePos) + 1];
+                char firstPart[1024]; // +1 for the null-terminator
+                char secondPart[1024];
 
                 // Copy the first part of the string
                 strncpy(firstPart, token, firstPartLength);
@@ -1397,19 +1409,32 @@ void saveScreenshot( ) {
 
 int main(int argc, char* argv[]) {
 
-    if (argc > 0) {
-        char *path = realpath(argv[0], NULL);
-        if (path != NULL) {
-            char *tmp = dirname(path);
-            workingDirectory = (char*)malloc(strlen(tmp)+1);
-            strcpy(workingDirectory,tmp);
-            printf("The directory of the currently running binary is: %s\n", workingDirectory);
-            free(path);
-        } else {
-            perror("realpath");
+    if (argc > 0)
+    {
+        try
+        {
+            std::filesystem::path exePath =
+                std::filesystem::absolute(std::filesystem::path(argv[0]));
+
+            std::filesystem::path workingDir =
+                exePath.parent_path();
+
+            std::string tmp = workingDir.string();
+
+            workingDirectory = (char*)malloc(tmp.size() + 1);
+            strcpy(workingDirectory, tmp.c_str());
+
+            printf("The directory of the currently running binary is: %s\n",
+                workingDirectory);
+        }
+        catch (const std::exception& e)
+        {
+            std::cerr << "Path error: " << e.what() << std::endl;
             return 1;
         }
-    } else {
+    }
+    else
+    {
         fprintf(stderr, "Unable to determine the binary path.\n");
         return 1;
     }

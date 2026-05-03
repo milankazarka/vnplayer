@@ -1,19 +1,19 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.15)
 project(vnplayer2)
 
-# Set C++ compiler
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Add compiler flags
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated -Wno-deprecated-declarations -Wno-writable-strings -Wno-unused-command-line-argument -Wno-c++11-compat-deprecated-writable-strings -Wno-format-security -Wno-c++11-extensions")
-
-# Add your source files
+# =========================
+# Source files
+# =========================
 set(SOURCE_FILES
     vnplayer2.cpp
     tinyxml.cpp
     tinystr.cpp
     tinyxmlerror.cpp
     tinyxmlparser.cpp
+
     engine/CActivity.cpp
     engine/CEffect.cpp
     engine/COutputLog.cpp
@@ -42,43 +42,46 @@ set(SOURCE_FILES
     engine/CScope.cpp
 )
 
-# Find SDL2, SDL2_image, SDL2_mixer, and SDL2_ttf
-find_package(SDL2 REQUIRED)
-find_package(SDL2_image REQUIRED)
-find_package(SDL2_mixer REQUIRED)
-find_package(SDL2_ttf REQUIRED)
-
-# Add include directories
-include_directories(
-    ${CMAKE_SOURCE_DIR}
-    ${SDL2_INCLUDE_DIRS}
-    ${SDL2_IMAGE_INCLUDE_DIRS}
-    ${SDL2_MIXER_INCLUDE_DIRS}
-    ${SDL2_TTF_INCLUDE_DIRS}
-)
-
-# Add executable target
 add_executable(vnplayer2 ${SOURCE_FILES})
 
-# Execute sdl2-config and capture its output
-execute_process(
-    COMMAND pkg-config --cflags --libs SDL2 SDL2_image SDL2_mixer SDL2_ttf
-    OUTPUT_VARIABLE SDL2_CONFIG_OUTPUT
-    OUTPUT_STRIP_TRAILING_WHITESPACE
+# =========================
+# Include
+# =========================
+target_include_directories(vnplayer2 PRIVATE
+    ${CMAKE_SOURCE_DIR}
 )
 
-# Append compiler and linker flags from sdl2-config to target properties
-string(REPLACE " " ";" SDL2_CONFIG_FLAGS ${SDL2_CONFIG_OUTPUT})
-target_compile_options(vnplayer2 PRIVATE ${SDL2_CONFIG_FLAGS})
+# =========================
+# SDL2 via vcpkg (SPRÁVNE NÁZVY)
+# =========================
+find_package(SDL2 CONFIG REQUIRED)
+find_package(SDL2_image CONFIG REQUIRED)
+find_package(SDL2_mixer CONFIG REQUIRED)
+find_package(SDL2_ttf CONFIG REQUIRED)
 
-# Link libraries
-target_link_libraries(vnplayer2
-    ${SDL2_CONFIG_OUTPUT}
+# =========================
+# Link
+# =========================
+target_link_libraries(vnplayer2 PRIVATE
+    SDL2::SDL2
+    SDL2::SDL2main
+    SDL2_image::SDL2_image
+    SDL2_mixer::SDL2_mixer
+    SDL2_ttf::SDL2_ttf
 )
 
-# Copy the binary to the destination folder after build
-add_custom_command(
-    TARGET vnplayer2
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:vnplayer2> "../"
+# =========================
+# Windows executable fix
+# =========================
+if(WIN32)
+    set_property(TARGET vnplayer2 PROPERTY WIN32_EXECUTABLE TRUE)
+endif()
+
+# =========================
+# Copy resources
+# =========================
+add_custom_command(TARGET vnplayer2 POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_SOURCE_DIR}/resources
+    $<TARGET_FILE_DIR:vnplayer2>/resources
 )
